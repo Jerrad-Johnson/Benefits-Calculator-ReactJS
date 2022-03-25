@@ -15,6 +15,7 @@ class Counter extends Component {
         })
     }
 
+
     render() {
         return (
             <div>
@@ -91,16 +92,13 @@ class Counter extends Component {
                     type="donut"
                     series={[50, 50, 20, 20.12]}
                     options = {{
+                        labels: ["Stuff", "Stuff2", "Stuff3", "Stuff4"],
                         dataLabels: {
                             enabled: true,
                             formatter: function(val, opts) {
                                 return "$" + opts.w.globals.series[opts.seriesIndex];
                             }
                         },
-                        chartOptions:{
-                            labels:[`test`, "test2", "test3", "test4"]
-                        },
-
                         plotOptions: {
                             pie: {
                                 startAngle: -90,

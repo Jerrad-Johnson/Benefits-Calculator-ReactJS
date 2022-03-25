@@ -9,9 +9,9 @@ class Counter extends Component {
         }
     }
 
-    increment(){
+    increment() {
         this.setState({
-            count: this.state.count +1
+            count: this.state.count + 1
         })
     }
 
@@ -28,39 +28,39 @@ class Counter extends Component {
                     height={600}
                     series={[
                         {
-                            name:'Stuff',
+                            name: 'Stuff',
                             data: [`${this.state.count}`, 200],
                             //color: '#ffffff',
                         }, {
-                            name:'Stuff2',
-                            data:[100, 200],
+                            name: 'Stuff2',
+                            data: [100, 200],
                             //color: '#ffff00',
                         }
                     ]}
                     options={{
-                        colors:["#ffffff", "#ffff00"],
-                        theme:{
-                            mode:'dark'
+                        colors: ["#ffffff", "#ffff00"],
+                        theme: {
+                            mode: 'dark'
                         },
                         // chart:{
                         //     stacked:true
                         // },
-                        dataLabels:{
-                            formatter:(val)=>{
+                        dataLabels: {
+                            formatter: (val) => {
                                 return `$${val}`;
                             },
-                            style:{
-                                colors:['#000','#000',],
-                                fontSize:16
+                            style: {
+                                colors: ['#000', '#000',],
+                                fontSize: 16
                             }
                         },
-                        yaxis:{
-                            labels:{
-                                formatter:(val)=>{
+                        yaxis: {
+                            labels: {
+                                formatter: (val) => {
                                     return `$${val}`;
                                 },
-                                style:{
-                                    colors:['#fff'],
+                                style: {
+                                    colors: ['#fff'],
                                 }
                             }
                         },
@@ -70,25 +70,73 @@ class Counter extends Component {
                                 text: 'Groups',
                             },
                         },
-                        legend:{
-                            show:true,
-                            position:'right',
+                        legend: {
+                            show: true,
+                            position: 'right',
                         },
-                        title:{
-                            text:'Title for Graph',
+                        title: {
+                            text: 'Title for Graph',
                             style: {
                                 fontSize: 20,
                             }
                         },
-                        subtitle:{
-                            text:'Subtitle for graph... Blah.'
+                        subtitle: {
+                            text: 'Subtitle for graph... Blah.'
                         }
                     }}
                 >
                 </Chart>
 
+                <Chart
+                    type="donut"
+                    series={[50, 50, 20, 20.12]}
+                    options = {{
+                        dataLabels: {
+                            enabled: true,
+                            formatter: function(val, opts) {
+                                return "$" + opts.w.globals.series[opts.seriesIndex];
+                            }
+                        },
+                        chartOptions:{
+                            labels:[`test`, "test2", "test3", "test4"]
+                        },
+
+                        plotOptions: {
+                            pie: {
+                                startAngle: -90,
+                                endAngle: 270
+                            }
+                        },
+                        fill: {
+                            type: 'gradient',
+                        },
+                        legend: {
+                            formatter: function (val, opts) {
+                                return val + " - " + opts.w.globals.series[opts.seriesIndex]
+                            }
+                        },
+                        theme: {
+                            mode: 'dark'
+                        },
+                        title: {
+                            text: 'Gradient Donut with custom Start-angle'
+                        },
+                        responsive: [{
+                            breakpoint: 480,
+                            options: {
+                                chart: {
+                                    width: 200
+                                },
+                                legend: {
+                                    position: 'bottom'
+                                }
+                            }
+                        }]
+                    }}
+                > </Chart>
+
             </div>
-        )
+        );
     }
 }
 

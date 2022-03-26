@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import Chart from "react-apexcharts";
-import Calculations from './Calculations.js';
+//import Calculations from './Calculations.js';
 
 class Counter extends Component {
     constructor(props) {
@@ -40,6 +40,16 @@ class Counter extends Component {
         })
     }
 
+        changeValue(name, val) {
+            let placeholder = parseInt(document.querySelector(".earning").value);
+
+
+            this.setState({
+                earning: placeholder
+            })
+        }
+
+
 
     render() {
         return (
@@ -50,70 +60,6 @@ class Counter extends Component {
                 <button onClick={() => this.increment()}>Increment</button>
 
 
-                <Chart
-                    type="bar"
-                    width={600}
-                    height={600}
-                    series={[
-                        {
-                            name: 'Stuff',
-                            data: [`${this.state.earning}`, 200],
-                            //color: '#ffffff',
-                        }, {
-                            name: 'Stuff2',
-                            data: [100, 200],
-                            //color: '#ffff00',
-                        }
-                    ]}
-                    options={{
-                        colors: ["#ffffff", "#ffff00"],
-                        // theme: {
-                        //     mode: 'dark'
-                        // },
-                        // chart:{
-                        //     stacked:true
-                        // },
-                        dataLabels: {
-                            formatter: (val) => {
-                                return `$${val}`;
-                            },
-                            style: {
-                                colors: ['#000', '#000',],
-                                fontSize: 16
-                            }
-                        },
-                        yaxis: {
-                            labels: {
-                                formatter: (val) => {
-                                    return `$${val}`;
-                                },
-                                style: {
-                                    colors: ['#fff'],
-                                }
-                            }
-                        },
-                        xaxis: {
-                            categories: ['Range 1', 'Range2'],
-                            title: {
-                                text: 'Groups',
-                            },
-                        },
-                        legend: {
-                            show: true,
-                            position: 'right',
-                        },
-                        title: {
-                            text: 'Title for Graph',
-                            style: {
-                                fontSize: 20,
-                            }
-                        },
-                        subtitle: {
-                            text: 'Subtitle for graph... Blah.'
-                        }
-                    }}
-                >
-                </Chart>
 
                 <Chart
                     type="donut"
@@ -304,7 +250,8 @@ class Counter extends Component {
                     <input type="number" className="ssiAmount"/>Lost: <br />
 
                     SSDI Income<br />
-                    <input type="number" className="ssdiAmount" defaultValue={5}/>Lost:<br />
+                    <input type="number" className="ssdiAmount" onChange={() => console.log()}
+                           defaultValue={this.state.ssdiAmount}/>Lost:<br />
 
                     SNAP Credit<br />
                     <input type="number" className="snapAmount"/>Lost:<br />
@@ -319,7 +266,8 @@ class Counter extends Component {
                     <input type="number" className="energyAmount"/>Lost:<br /><br />
 
                     Income<br />
-                    <input type="number" className="earning"/>...<br/>
+                    <input type="number" className="earning" onChange={() => this.changeValue("earning")}
+                           defaultValue={this.state.earning}/>...<br/>
 
                     Fed. Taxed After Deduction<br />
                     <input type="number" className="deductedEarning"/> Lost: <br />
@@ -334,6 +282,74 @@ class Counter extends Component {
                         <font color="green">{ earning.toFixed(2) }</font> --- Lost:
                         <font color="red"> { this.state.combinedLoss }</font>*/}
                 </form>
+
+
+                {/*
+                <Chart
+                    type="bar"
+                    width={600}
+                    height={600}
+                    series={[
+                        {
+                            name: 'Stuff',
+                            data: [`${this.state.earning}`, 200],
+                            //color: '#ffffff',
+                        }, {
+                            name: 'Stuff2',
+                            data: [100, 200],
+                            //color: '#ffff00',
+                        }
+                    ]}
+                    options={{
+                        colors: ["#ffffff", "#ffff00"],
+                        // theme: {
+                        //     mode: 'dark'
+                        // },
+                        // chart:{
+                        //     stacked:true
+                        // },
+                        dataLabels: {
+                            formatter: (val) => {
+                                return `$${val}`;
+                            },
+                            style: {
+                                colors: ['#000', '#000',],
+                                fontSize: 16
+                            }
+                        },
+                        yaxis: {
+                            labels: {
+                                formatter: (val) => {
+                                    return `$${val}`;
+                                },
+                                style: {
+                                    colors: ['#fff'],
+                                }
+                            }
+                        },
+                        xaxis: {
+                            categories: ['Range 1', 'Range2'],
+                            title: {
+                                text: 'Groups',
+                            },
+                        },
+                        legend: {
+                            show: true,
+                            position: 'right',
+                        },
+                        title: {
+                            text: 'Title for Graph',
+                            style: {
+                                fontSize: 20,
+                            }
+                        },
+                        subtitle: {
+                            text: 'Subtitle for graph... Blah.'
+                        }
+                    }}
+                >
+                </Chart>*/}
+
 
             </div>
         );

@@ -5,74 +5,153 @@ import Chart from "react-apexcharts";
 class Counter extends Component {
     constructor(props) {
         super(props);
+        this.handleLoad = this.handleLoad.bind(this);
+
         this.state = {
-            earning: 1185,
-            stateTaxPercent:0,
-            disabled:1,
-            selfEmployed:0,
-            ssiAmount:146,
-            ssdiAmount:624,
-            snapAmount:170,
-            snapCutOff:1300,
-            sec8Amount:407,
-            federalTaxes: 0,
-            medicareTax: 0,
-            ssTax: 0,
-            energyAmount:40,
-            deductedEarning:118,
-            steps:[100, 250, 500, 1000, 1170, 1190, 1500, 2000, 3000,
-                4000],
-            steppedResults:[],
-            steppedResultsLoss:[],
-            steppedBenefits:[],
-            difference: 0,
-            differenceColor: 'differenceGreen',
-            incomeAfterTax: 0,
-            incomePlusBenefits:[],
+            income:                 1185,
+            ssiAssistanceValue:     146,
+            ssdiAssistanceValue:    624,
+            snapAssistanceValue:    170,
+            housingAssistanceValue: 407,
+            energyAssistanceValue:  40,
+            medicareAssistanceValue:0,
+            medicaidAssistanceValue:0,
+            pellAssistanceValue:    50,
+            snapCutOff:             1300,
+            stateTaxPercentage:     0,
+            federalTaxes:           0,
+            medicareTax:            0,
+            ssTax:                  0,
+            deductedEarning:        118,
+            steps:                  [100, 250, 500, 1000, 1170, 1190, 1500, 2000, 3000,
+                                    4000],
         }
-
-
     }
 
-         increment() {
-            this.setState({
-                earning: this.state.earning + 1
-            })
-        }
 
         updateValueFromInputForms(name) {
-            let placeholder = parseInt(document.querySelector("." + name).value);
-            if (isNaN(placeholder)){
-                placeholder = 0;
+
+            let val = document.querySelector("." + name).valueAsNumber;
+            console.log(val);
+            if (isNaN(val)){
+                val = 0;
             }
 
             this.setState({
-                [name]: placeholder
-            }, () => {
-//                console.log(5)
+                [name]: val
+            }/*, () => {
+                console.log(5)
+            }*/)
+        }
+
+        updateLossesPerSource(name, val) {
+            if (isNaN(val)){
+                val = 0;
+            }
+
+            this.setState({
+                [name]: val
+            }/*, () => {
+                console.log(5)
+            }*/)
+        }
+
+
+        increment() {
+            this.setState({
+                income: this.state.income + 1
             })
         }
 
+
+         //   let propertyName = Object.keys({nameAndVal})[0];
+         //   console.log(propertyName);
+
+
+        ssiScale() {
+            if (this.state.income > 20) {
+                let ssiLost = (this.state.income - 20) / 2;
+                    if (this.state.ssiAmount >= ssiLost) {
+                        this.updateLossesPerSource("ssiLost", ssiLost);
+                    } else {
+                        return this.ssiAmount; // The loss is equal to the total assistance
+                    }
+                return ssiLost;
+            } else {
+                return 0;
+            }
+        }
+        componentDidMount() {
+            window.addEventListener('load', this.handleLoad);
+        }
+
+        componentWillUnmount() {
+            window.removeEventListener('load', this.handleLoad)
+        }
+
+        handleLoad() {
+            console.log("test");
+            //this.updateLossesPerSource('ssiAssistanceValue', 500);
+        }
+
+
     render() {
+
+        const
+        income = "income",
+        ssiAssistanceValue = "ssiAssistanceValue",
+        ssdiAssistanceValue = "ssdiAssistanceValue",
+        snapAssistanceValue = "snapAssistanceValue",
+        housingAssistanceValue = "housingAssistanceValue",
+        energyAssistanceValue = "energyAssistanceValue",
+        stateTaxPercentage = "stateTaxPercentage",
+        medicaidAssistanceValue = "medicaidAssistanceValue",
+        medicareAssistanceValue = "medicareAssistanceValue",
+        pellAssistanceValue = "pellAssistanceValue";
+
+
+
+
         return (
             <div>
 
-
-                Count - {this.state.earning}
-                <button onClick={() => this.increment()}>Increment</button>
-
-
+                Count - {this.state.income}
+                <button onClick={() => this.updateLossesPerSource("ssiLost", 500)}>Increment</button>
 
                 <Chart
                     type="donut"
                     width={600}
                     height={600}
-                    series={[this.state.earning, this.state.ssiAmount, this.state.ssdiAmount, this.state.snapAmount,
-                        this.state.sec8Amount, this.state.energyAmount, this.state.federalTaxes, /*,*/
-                        this.state.medicareTax, this.state.ssTax]}
+                    series={[
+                        this.state.income,
+                        this.state.ssiAssistanceValue,
+                        this.state.ssdiAssistanceValue,
+                        this.state.snapAssistanceValue,
+                        this.state.housingAssistanceValue,
+                        this.state.energyAssistanceValue,
+                        this.state.pellAssistanceValue,
+                        this.state.medicareAssistanceValue,
+                        this.state.medicaidAssistanceValue,
+                        this.state.federalTaxes,
+                        /*State Tax,*/
+                        this.state.medicareTax,
+                        this.state.ssTax]}
                     options = {{
-                        labels: ["Income", "SSI", "SSDI", "SNAP", "Sec. 8", "LIEAP", "Federal Tax",
-                            /*"State Tax",*/ "Medicare Tax", "SS Tax"],
+                        labels: [
+                            "Income",
+                            "SSI",
+                            "SSDI",
+                            "SNAP",
+                            "Sec. 8",
+                            "LIEAP",
+                            "Pell Grant",
+                            "Medicare",
+                            "Medicaid",
+                            "Federal Tax",
+                            /*"State Tax",*/
+                            "Medicare Tax",
+                            "SS Tax"
+                        ],
                         dataLabels: {
                             enabled: true,
                             formatter: function(val, opts) {
@@ -239,43 +318,56 @@ class Counter extends Component {
                 />
                 <br />
                 <form>
-                    Disabled<br />
-                    <input type="radio" className="disabled" value="1" />True<br />
-                    <input type="radio" className="disabled" value="0"/>False<br /><br />
-
-                    Self-employed<br />
-                    <input type="radio" className="selfEmployed" value="1"/>True
-
-                    <input type="radio" className="selfEmployed" value="0"/>False<br /><br />
-
-                    SSI Income<br />
-                    <input type="number" className="ssiAmount"/>Lost: <br />
-
-                    SSDI Income<br />
-                    <input type="number" className="ssdiAmount" onChange={() => console.log()}
-                           defaultValue={this.state.ssdiAmount}/>Lost:<br />
-
-                    SNAP Credit<br />
-                    <input type="number" className="snapAmount"/>Lost:<br />
-
-                    SNAP Cutoff (If not disabled)<br />
-                    <input type="number" className="snapCutOff"/>...<br />
-
-                    Section 8 Credit<br />
-                    <input type="number" className="sec8Amount"/>Lost:<br />
-
-                    LIEAP Credit<br />
-                    <input type="number" className="energyAmount"/>Lost:<br /><br />
 
                     Income<br />
-                    <input type="number" className="earning" onChange={() => this.updateValueFromInputForms("earning")}
-                           defaultValue={this.state.earning}/>...<br/>
+                    <input type="number" className={`${income}`} onChange={() =>
+                        this.updateValueFromInputForms(income)}
+                           defaultValue={this.state.income}/> <br/>
 
-                    Fed. Taxed After Deduction<br />
-                    <input type="number" className="deductedEarning"/> Lost: <br />
+                    SSI Income<br />
+                    <input type="number" className={`${ssiAssistanceValue}`} onChange={() =>
+                        this.updateValueFromInputForms(ssiAssistanceValue)}
+                           defaultValue={this.state.ssiAssistanceValue}/> Lost: <br />
 
-                    State Tax<br />
-                    <input type="number" className="stateTaxPercent"/> Lost: <br />
+                    SSDI Income<br />
+                    <input type="number" className={`${ssdiAssistanceValue}`} onChange={() =>
+                        this.updateValueFromInputForms(ssdiAssistanceValue)}
+                           defaultValue={this.state.ssdiAssistanceValue}/> Lost:<br />
+
+                    SNAP Credit<br />
+                    <input type="number" className={`${snapAssistanceValue}`} onChange={() =>
+                        this.updateValueFromInputForms(snapAssistanceValue)}
+                           defaultValue={this.state.snapAssistanceValue}/> Lost:<br />
+
+                    Section 8 Credit<br />
+                    <input type="number" className={`${housingAssistanceValue}`} onChange={() =>
+                        this.updateValueFromInputForms(housingAssistanceValue)}
+                           defaultValue={this.state.housingAssistanceValue}/> Lost:<br />
+
+                    LIEAP Credit<br />
+                    <input type="number" className={`${energyAssistanceValue}`} onChange={() =>
+                        this.updateValueFromInputForms(energyAssistanceValue)}
+                           defaultValue={this.state.energyAssistanceValue}/> Lost:<br />
+
+                    Pell Grant Credit<br />
+                    <input type="number" className={`${pellAssistanceValue}`} onChange={() =>
+                        this.updateValueFromInputForms(pellAssistanceValue)}
+                           defaultValue={this.state.pellAssistanceValue}/> Lost:<br />
+
+                    Medicare est. Value<br />
+                    <input type="number" className={`${medicaidAssistanceValue}`} onChange={() =>
+                        this.updateValueFromInputForms(medicaidAssistanceValue)}
+                           defaultValue={this.state.medicaidAssistanceValue}/> Lost:<br />
+
+                    Medicaid est. Value<br />
+                    <input type="number" className={`${medicaidAssistanceValue}`} onChange={() =>
+                        this.updateValueFromInputForms(medicaidAssistanceValue)}
+                           defaultValue={this.state.medicaidAssistanceValue}/> Lost:<br />
+
+                    State Tax Percentage<br />
+                    <input type="number" className={`${stateTaxPercentage}`} onChange={() =>
+                        this.updateValueFromInputForms(stateTaxPercentage)}
+                           defaultValue={this.state.stateTaxPercentage}/> Lost: <br />
 
                     <br /><br />
                     Lost to medicare tax:  <br />

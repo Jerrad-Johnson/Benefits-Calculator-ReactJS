@@ -177,3 +177,4 @@
         //console.log(combinedLoss);
         return combinedLoss;
     }
+

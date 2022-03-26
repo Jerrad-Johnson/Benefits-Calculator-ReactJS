@@ -1,17 +1,42 @@
 import React, {Component} from 'react';
 import Chart from "react-apexcharts";
+import Calculations from './Calculations.js';
 
 class Counter extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            count: 20
+            earning: 1185,
+            stateTaxPercent:0,
+            disabled:1,
+            selfEmployed:0,
+            ssiAmount:146,
+            ssdiAmount:624,
+            snapAmount:170,
+            snapCutOff:1300,
+            sec8Amount:407,
+            federalTaxes: 0,
+            medicareTax: 0,
+            ssTax: 0,
+            energyAmount:40,
+            deductedEarning:118,
+            steps:[100, 250, 500, 1000, 1170, 1190, 1500, 2000, 3000,
+                4000],
+            steppedResults:[],
+            steppedResultsLoss:[],
+            steppedBenefits:[],
+            difference: 0,
+            differenceColor: 'differenceGreen',
+            incomeAfterTax: 0,
+            incomePlusBenefits:[],
         }
+
+
     }
 
-    increment() {
+     increment() {
         this.setState({
-            count: this.state.count + 1
+            earning: this.state.earning + 1
         })
     }
 
@@ -19,7 +44,9 @@ class Counter extends Component {
     render() {
         return (
             <div>
-                Count - {this.state.count}
+
+
+                Count - {this.state.earning}
                 <button onClick={() => this.increment()}>Increment</button>
 
 
@@ -30,7 +57,7 @@ class Counter extends Component {
                     series={[
                         {
                             name: 'Stuff',
-                            data: [`${this.state.count}`, 200],
+                            data: [`${this.state.earning}`, 200],
                             //color: '#ffffff',
                         }, {
                             name: 'Stuff2',
@@ -92,10 +119,12 @@ class Counter extends Component {
                     type="donut"
                     width={600}
                     height={600}
-                    series={[50, 50, 20, 20.12, 5, 5, 5, 5, 5, 5]}
+                    series={[this.state.earning, this.state.ssiAmount, this.state.ssdiAmount, this.state.snapAmount,
+                        this.state.sec8Amount, this.state.energyAmount, this.state.federalTaxes, /*,*/
+                        this.state.medicareTax, this.state.ssTax]}
                     options = {{
                         labels: ["Income", "SSI", "SSDI", "SNAP", "Sec. 8", "LIEAP", "Federal Tax",
-                            "State Tax", "Medicare Tax", "SS Tax"],
+                            /*"State Tax",*/ "Medicare Tax", "SS Tax"],
                         dataLabels: {
                             enabled: true,
                             formatter: function(val, opts) {
@@ -260,6 +289,51 @@ class Counter extends Component {
                     }}
 
                 />
+                <br />
+                <form>
+                    Disabled<br />
+                    <input type="radio" className="disabled" value="1" />True<br />
+                    <input type="radio" className="disabled" value="0"/>False<br /><br />
+
+                    Self-employed<br />
+                    <input type="radio" className="selfEmployed" value="1"/>True
+
+                    <input type="radio" className="selfEmployed" value="0"/>False<br /><br />
+
+                    SSI Income<br />
+                    <input type="number" className="ssiAmount"/>Lost: <br />
+
+                    SSDI Income<br />
+                    <input type="number" className="ssdiAmount" defaultValue={5}/>Lost:<br />
+
+                    SNAP Credit<br />
+                    <input type="number" className="snapAmount"/>Lost:<br />
+
+                    SNAP Cutoff (If not disabled)<br />
+                    <input type="number" className="snapCutOff"/>...<br />
+
+                    Section 8 Credit<br />
+                    <input type="number" className="sec8Amount"/>Lost:<br />
+
+                    LIEAP Credit<br />
+                    <input type="number" className="energyAmount"/>Lost:<br /><br />
+
+                    Income<br />
+                    <input type="number" className="earning"/>...<br/>
+
+                    Fed. Taxed After Deduction<br />
+                    <input type="number" className="deductedEarning"/> Lost: <br />
+
+                    State Tax<br />
+                    <input type="number" className="stateTaxPercent"/> Lost: <br />
+
+                    <br /><br />
+                    Lost to medicare tax:  <br />
+                    Lost to social security tax: <br />
+                    Earned:{/*
+                        <font color="green">{ earning.toFixed(2) }</font> --- Lost:
+                        <font color="red"> { this.state.combinedLoss }</font>*/}
+                </form>
 
             </div>
         );

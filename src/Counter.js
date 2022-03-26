@@ -40,9 +40,9 @@ class Counter extends Component {
                     ]}
                     options={{
                         colors: ["#ffffff", "#ffff00"],
-                        theme: {
-                            mode: 'dark'
-                        },
+                        // theme: {
+                        //     mode: 'dark'
+                        // },
                         // chart:{
                         //     stacked:true
                         // },
@@ -90,9 +90,12 @@ class Counter extends Component {
 
                 <Chart
                     type="donut"
-                    series={[50, 50, 20, 20.12]}
+                    width={600}
+                    height={600}
+                    series={[50, 50, 20, 20.12, 5, 5, 5, 5, 5, 5]}
                     options = {{
-                        labels: ["Stuff", "Stuff2", "Stuff3", "Stuff4"],
+                        labels: ["Income", "SSI", "SSDI", "SNAP", "Sec. 8", "LIEAP", "Federal Tax",
+                            "State Tax", "Medicare Tax", "SS Tax"],
                         dataLabels: {
                             enabled: true,
                             formatter: function(val, opts) {
@@ -110,12 +113,12 @@ class Counter extends Component {
                         },
                         legend: {
                             formatter: function (val, opts) {
-                                return val + " - " + opts.w.globals.series[opts.seriesIndex]
+                                return val + " - $" + opts.w.globals.series[opts.seriesIndex]
                             }
                         },
-                        theme: {
-                            mode: 'dark'
-                        },
+                        // theme: {
+                        //     mode: 'dark'
+                        // },
                         title: {
                             text: 'Gradient Donut with custom Start-angle'
                         },
@@ -132,6 +135,131 @@ class Counter extends Component {
                         }]
                     }}
                 > </Chart>
+
+                <Chart
+                    width={600}
+                    height={400}
+                    series={[
+                        {
+                            name: 'Income',
+                            type: 'column',
+                            data: [1.4, 2, 2.5, 1.5, 2.5, 2.8, 3.8, 4.6]
+                        }, {
+                            name: 'Cashflow',
+                            type: 'column',
+                            data: [1.1, 3, 3.1, 4, 4.1, 4.9, 6.5, 8.5]
+                        }, {
+                            name: 'Revenue',
+                            type: 'line',
+                            data: [20, 29, 37, 36, 44, 45, 50, 58]
+                        }
+                        ]}
+                    options={{
+
+                        chart: {
+                            height: 350,
+                            type: 'line',
+                            stacked: false
+                        },
+                        dataLabels: {
+                            enabled: false
+                        },
+                        stroke: {
+                            width: [1, 1, 4]
+                        },
+                        title: {
+                            text: 'XYZ - Stock Analysis (2009 - 2016)',
+                            align: 'left',
+                            offsetX: 110
+                        },
+                        xaxis: {
+                            categories: [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016],
+                        },
+                        yaxis: [
+                            {
+                                seriesName: 'Expenses',
+                                axisTicks: {
+                                    show: true,
+                                },
+                                axisBorder: {
+                                    show: true,
+                                    color: '#008FFB'
+                                },
+                                labels: {
+                                    style: {
+                                        colors: '#008FFB',
+                                    }
+                                },
+                                title: {
+                                    text: "Expenses",
+                                    style: {
+                                        color: '#008FFB',
+                                    }
+                                },
+                                tooltip: {
+                                    enabled: true
+                                }
+                            },
+                            {
+                                seriesName: 'Income',
+                                opposite: true,
+                                axisTicks: {
+                                    show: true,
+                                },
+                                axisBorder: {
+                                    show: true,
+                                    color: '#00E396'
+                                },
+                                labels: {
+                                    style: {
+                                        colors: '#00E396',
+                                    }
+                                },
+                                title: {
+                                    text: "Income",
+                                    style: {
+                                        color: '#00E396',
+                                    }
+                                },
+                            },
+                            {
+                                seriesName: 'Difference',
+                                opposite: true,
+                                axisTicks: {
+                                    show: true,
+                                },
+                                axisBorder: {
+                                    show: true,
+                                    color: '#FEB019'
+                                },
+                                labels: {
+                                    style: {
+                                        colors: '#FEB019',
+                                    },
+                                },
+                                title: {
+                                    text: "Difference (compared to not working)",
+                                    style: {
+                                        color: '#FEB019',
+                                    }
+                                }
+                            },
+                        ],
+                        tooltip: {
+                            fixed: {
+                                enabled: true,
+                                position: 'topLeft', // topRight, topLeft, bottomRight, bottomLeft
+                                offsetY: 30,
+                                offsetX: 60
+                            },
+                        },
+                        legend: {
+                            horizontalAlign: 'left',
+                            offsetX: 40
+                        }
+                    }}
+
+                />
 
             </div>
         );

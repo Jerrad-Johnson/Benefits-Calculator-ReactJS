@@ -34,22 +34,24 @@ class Counter extends Component {
 
     }
 
-     increment() {
-        this.setState({
-            earning: this.state.earning + 1
-        })
-    }
-
-        changeValue(name, val) {
-            let placeholder = parseInt(document.querySelector(".earning").value);
-
-
+         increment() {
             this.setState({
-                earning: placeholder
+                earning: this.state.earning + 1
             })
         }
 
+        updateValueFromInputForms(name) {
+            let placeholder = parseInt(document.querySelector("." + name).value);
+            if (isNaN(placeholder)){
+                placeholder = 0;
+            }
 
+            this.setState({
+                [name]: placeholder
+            }, () => {
+//                console.log(5)
+            })
+        }
 
     render() {
         return (
@@ -266,7 +268,7 @@ class Counter extends Component {
                     <input type="number" className="energyAmount"/>Lost:<br /><br />
 
                     Income<br />
-                    <input type="number" className="earning" onChange={() => this.changeValue("earning")}
+                    <input type="number" className="earning" onChange={() => this.updateValueFromInputForms("earning")}
                            defaultValue={this.state.earning}/>...<br/>
 
                     Fed. Taxed After Deduction<br />
@@ -349,8 +351,6 @@ class Counter extends Component {
                     }}
                 >
                 </Chart>*/}
-
-
             </div>
         );
     }

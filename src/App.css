@@ -95,8 +95,8 @@ input, select {
 }
 
 body {
-  background-color: #000;
-  color: #ccc;
+  background-color: #fff;
+  color: #000;
 }
 
 @media (prefers-reduced-motion: no-preference) {

@@ -1,6 +1,11 @@
+import Counter from "./Counter.js";
+
+
 function Home() {
     return (
-        <div> Test </div>
+        <div>
+            <Counter />
+        </div>
     );
 }
 

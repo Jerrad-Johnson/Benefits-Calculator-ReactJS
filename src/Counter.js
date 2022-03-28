@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import Chart from "react-apexcharts";
-//import Calculations from './Calculations.js';
 
 class Counter extends Component {
     constructor(props) {
@@ -17,6 +16,12 @@ class Counter extends Component {
             medicareAssistanceValue:0,
             medicaidAssistanceValue:0,
             pellAssistanceValue:    50,
+
+            ssdiLost: 0,
+            ssdiRemaining: 0,
+            ssiLost: 0,
+            ssiRemaining: 0,
+
             snapCutOff:             1300,
             stateTaxPercentage:     0,
             federalTaxes:           0,
@@ -28,72 +33,88 @@ class Counter extends Component {
         }
     }
 
+    componentDidMount() {
+        window.addEventListener('load', this.handleLoad);
+    }
 
-        updateValueFromInputForms(name) {
+    componentWillUnmount() {
+        window.removeEventListener('load', this.handleLoad)
+    }
 
-            let val = document.querySelector("." + name).valueAsNumber;
-            console.log(val);
-            if (isNaN(val)){
-                val = 0;
-            }
+    handleLoad() {
+        console.log("test");
+        //this.updateLossesPerSource('ssiAssistanceValue', 500);
+    }
 
-            this.setState({
-                [name]: val
-            }/*, () => {
-                console.log(5)
-            }*/)
+    updateIncomeFromInputForm(){
+        let val = document.querySelector("." + "income").valueAsNumber;
+        if (isNaN(val)) {
+            val = 0;
         }
 
-        updateLossesPerSource(name, val) {
-            if (isNaN(val)){
-                val = 0;
-            }
+        this.setState({
+            "income": val
+        }, function () {
+            this.ssdiLosses();
+        })
+    }
 
-            this.setState({
-                [name]: val
-            }/*, () => {
-                console.log(5)
-            }*/)
+
+    updateValueFromInputForms(name, caseValue) {
+        let val = document.querySelector("." + name).valueAsNumber;
+        if (typeof caseValue === 'undefined') {
+            let caseValue = "nothing";
         }
 
+        if (isNaN(val)) {
+            val = 0;
+        }
 
-        increment() {
+        this.setState({
+            [name]: val
+        }, function () {
+            switch (caseValue) {
+                case "ssdi":
+                    this.ssdiLosses();
+                    break;
+                case "ssi":
+                    this.ssiLosses();
+                    break;
+            }
+        })
+    }
+
+    ssdiLosses() {
+        let maxLoss = (this.state.income - 20) / 2; // 490
+        if (this.state.income > 20) {
+            if (maxLoss <= this.state.ssdiAssistanceValue) {
+                this.setState({
+                    "ssdiLost": maxLoss,
+                    "ssdiRemaining": this.state.ssdiRemaining,
+                })
+            } else if (maxLoss > this.state.ssdiAssistanceValue) {
+                this.setState({
+                    "ssdiLost": this.state.ssdiAssistanceValue,
+                    "ssdiRemaining": 0,
+                })
+            }
+        }
+    }
+
+    ssiLosses() {
+        let ssiCutOff = 1180;
+        if (this.state.income >= ssiCutOff) {
             this.setState({
-                income: this.state.income + 1
+                "ssiLost": this.state.ssiAssistanceValue,
+                "ssiRemaining": 0,
+            })
+        } else {
+            this.setState({
+                "ssiLost": 0,
+                "ssiRemaining": this.state.ssiAssistanceValue,
             })
         }
-
-
-         //   let propertyName = Object.keys({nameAndVal})[0];
-         //   console.log(propertyName);
-
-
-        ssiScale() {
-            if (this.state.income > 20) {
-                let ssiLost = (this.state.income - 20) / 2;
-                    if (this.state.ssiAmount >= ssiLost) {
-                        this.updateLossesPerSource("ssiLost", ssiLost);
-                    } else {
-                        return this.ssiAmount; // The loss is equal to the total assistance
-                    }
-                return ssiLost;
-            } else {
-                return 0;
-            }
-        }
-        componentDidMount() {
-            window.addEventListener('load', this.handleLoad);
-        }
-
-        componentWillUnmount() {
-            window.removeEventListener('load', this.handleLoad)
-        }
-
-        handleLoad() {
-            console.log("test");
-            //this.updateLossesPerSource('ssiAssistanceValue', 500);
-        }
-
+    }
 
     render() {
 
@@ -108,16 +129,13 @@ class Counter extends Component {
         medicaidAssistanceValue = "medicaidAssistanceValue",
         medicareAssistanceValue = "medicareAssistanceValue",
         pellAssistanceValue = "pellAssistanceValue";
+        //placeholder = [this.state.ssdiLost]
 
 
 
 
         return (
             <div>
-
-                Count - {this.state.income}
-                <button onClick={() => this.updateLossesPerSource("ssiLost", 500)}>Increment</button>
-
                 <Chart
                     type="donut"
                     width={600}
@@ -125,7 +143,7 @@ class Counter extends Component {
                     series={[
                         this.state.income,
                         this.state.ssiAssistanceValue,
-                        this.state.ssdiAssistanceValue,
+                        this.state.ssdiRemaining,
                         this.state.snapAssistanceValue,
                         this.state.housingAssistanceValue,
                         this.state.energyAssistanceValue,
@@ -135,7 +153,8 @@ class Counter extends Component {
                         this.state.federalTaxes,
                         /*State Tax,*/
                         this.state.medicareTax,
-                        this.state.ssTax]}
+                        this.state.ssTax,
+                        this.state.ssdiLost]}
                     options = {{
                         labels: [
                             "Income",
@@ -150,7 +169,8 @@ class Counter extends Component {
                             "Federal Tax",
                             /*"State Tax",*/
                             "Medicare Tax",
-                            "SS Tax"
+                            "SS Tax",
+                            "ssdiLost",
                         ],
                         dataLabels: {
                             enabled: true,
@@ -172,9 +192,6 @@ class Counter extends Component {
                                 return val + " - $" + opts.w.globals.series[opts.seriesIndex]
                             }
                         },
-                        // theme: {
-                        //     mode: 'dark'
-                        // },
                         title: {
                             text: 'Gradient Donut with custom Start-angle'
                         },
@@ -318,21 +335,20 @@ class Counter extends Component {
                 />
                 <br />
                 <form>
-
                     Income<br />
                     <input type="number" className={`${income}`} onChange={() =>
-                        this.updateValueFromInputForms(income)}
-                           defaultValue={this.state.income}/> <br/>
+                        this.updateIncomeFromInputForm()}
+                           defaultValue={this.state.income}/>  Income {`${this.state.income}`} <br/>
 
                     SSI Income<br />
                     <input type="number" className={`${ssiAssistanceValue}`} onChange={() =>
-                        this.updateValueFromInputForms(ssiAssistanceValue)}
-                           defaultValue={this.state.ssiAssistanceValue}/> Lost: <br />
+                        this.updateValueFromInputForms(ssiAssistanceValue, "ssi")}
+                           defaultValue={this.state.ssiAssistanceValue}/> Lost: {`${this.state.ssiLost}`}<br />
 
                     SSDI Income<br />
                     <input type="number" className={`${ssdiAssistanceValue}`} onChange={() =>
-                        this.updateValueFromInputForms(ssdiAssistanceValue)}
-                           defaultValue={this.state.ssdiAssistanceValue}/> Lost:<br />
+                        this.updateValueFromInputForms(ssdiAssistanceValue, "ssdi")}
+                       defaultValue={this.state.ssdiAssistanceValue}/> Lost: {`${this.state.ssdiLost}`}<br />
 
                     SNAP Credit<br />
                     <input type="number" className={`${snapAssistanceValue}`} onChange={() =>
@@ -355,9 +371,9 @@ class Counter extends Component {
                            defaultValue={this.state.pellAssistanceValue}/> Lost:<br />
 
                     Medicare est. Value<br />
-                    <input type="number" className={`${medicaidAssistanceValue}`} onChange={() =>
-                        this.updateValueFromInputForms(medicaidAssistanceValue)}
-                           defaultValue={this.state.medicaidAssistanceValue}/> Lost:<br />
+                    <input type="number" className={`${medicareAssistanceValue}`} onChange={() =>
+                        this.updateValueFromInputForms(medicareAssistanceValue)}
+                           defaultValue={this.state.medicareAssistanceValue}/> Lost:<br />
 
                     Medicaid est. Value<br />
                     <input type="number" className={`${medicaidAssistanceValue}`} onChange={() =>
@@ -376,73 +392,6 @@ class Counter extends Component {
                         <font color="green">{ earning.toFixed(2) }</font> --- Lost:
                         <font color="red"> { this.state.combinedLoss }</font>*/}
                 </form>
-
-
-                {/*
-                <Chart
-                    type="bar"
-                    width={600}
-                    height={600}
-                    series={[
-                        {
-                            name: 'Stuff',
-                            data: [`${this.state.earning}`, 200],
-                            //color: '#ffffff',
-                        }, {
-                            name: 'Stuff2',
-                            data: [100, 200],
-                            //color: '#ffff00',
-                        }
-                    ]}
-                    options={{
-                        colors: ["#ffffff", "#ffff00"],
-                        // theme: {
-                        //     mode: 'dark'
-                        // },
-                        // chart:{
-                        //     stacked:true
-                        // },
-                        dataLabels: {
-                            formatter: (val) => {
-                                return `$${val}`;
-                            },
-                            style: {
-                                colors: ['#000', '#000',],
-                                fontSize: 16
-                            }
-                        },
-                        yaxis: {
-                            labels: {
-                                formatter: (val) => {
-                                    return `$${val}`;
-                                },
-                                style: {
-                                    colors: ['#fff'],
-                                }
-                            }
-                        },
-                        xaxis: {
-                            categories: ['Range 1', 'Range2'],
-                            title: {
-                                text: 'Groups',
-                            },
-                        },
-                        legend: {
-                            show: true,
-                            position: 'right',
-                        },
-                        title: {
-                            text: 'Title for Graph',
-                            style: {
-                                fontSize: 20,
-                            }
-                        },
-                        subtitle: {
-                            text: 'Subtitle for graph... Blah.'
-                        }
-                    }}
-                >
-                </Chart>*/}
             </div>
         );
     }

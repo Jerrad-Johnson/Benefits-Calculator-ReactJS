@@ -69,7 +69,7 @@ class Counter extends Component {
             this.energyLosses();
             this.taxLosses();
             this.medicareLosses();
-            //this.medicaidLosses();
+            this.medicaidLosses();
         })
     }
 
@@ -108,9 +108,6 @@ class Counter extends Component {
                 case "medicare":
                     this.medicareLosses();
                     break;
-                case "medicaid":
-                    this.medicaidLosses();
-                    break;
                 default:
                     break;
             }
@@ -120,22 +117,26 @@ class Counter extends Component {
     ssdiLosses() {
         let maxLoss = (this.state.income - 20) / 2;
         if (this.state.income > 20) {
-            if (maxLoss <= this.state.ssdiAssistanceValue) {
+            if (maxLoss < this.state.ssdiAssistanceValue) {
+                let remainder = (this.state.ssdiAssistanceValue - maxLoss);
                 this.setState({
                     "ssdiLost": maxLoss,
-                    "ssdiRemaining": this.state.ssdiRemaining, //TODO Check this
+                    "ssdiRemaining": remainder, //TODO Check this
+                }, function () {
+                    this.medicaidLosses();
                 })
-            } else if (maxLoss > this.state.ssdiAssistanceValue) {
+            } else if (maxLoss >= this.state.ssdiAssistanceValue) {
                 this.setState({
                     "ssdiLost": this.state.ssdiAssistanceValue,
                     "ssdiRemaining": 0,
+                }, function () {
+                    this.medicaidLosses();
                 })
             }
         }
     }
 
     ssiLosses() {
-
         if (this.state.income >= this.ssiCutoff) {
             this.setState({
                 "ssiLost": this.state.ssiAssistanceValue,
@@ -218,6 +219,18 @@ class Counter extends Component {
         }
     }
 
+    medicaidLosses(){
+        console.log(this.state.ssdiRemaining);
+        if (this.state.ssdiRemaining === 0){
+            this.setState({
+                "medicaidLost": this.state.medicaidAssistanceValue,
+            })
+        } else {
+            this.setState({
+                "medicaidLost": 0,
+            })
+        }
+    }
 
     render() {
         const
@@ -481,7 +494,7 @@ class Counter extends Component {
                     Medicaid est. Value<br />
                     <input type="number" className={`${medicaidAssistanceValue}`} onChange={() =>
                         this.updateValueFromInputForms(medicaidAssistanceValue)}
-                           defaultValue={this.state.medicaidAssistanceValue}/> Lost:<br />
+                           defaultValue={this.state.medicaidAssistanceValue}/> Lost: {`${this.state.medicaidLost.toFixed(2)}`}<br />
 
                     <br /><br />
                     Lost to federal income tax: <br />

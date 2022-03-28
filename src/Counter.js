@@ -4,8 +4,8 @@ import Chart from "react-apexcharts";
 class Counter extends Component {
     constructor(props) {
         super(props);
+        this.ssiCutoff = 1180;
         this.handleLoad = this.handleLoad.bind(this);
-
         this.state = {
             income:                 1185,
             ssiAssistanceValue:     146,
@@ -15,14 +15,22 @@ class Counter extends Component {
             energyAssistanceValue:  40,
             medicareAssistanceValue:0,
             medicaidAssistanceValue:0,
-            pellAssistanceValue:    50,
 
             ssdiLost: 0,
             ssdiRemaining: 0,
             ssiLost: 0,
             ssiRemaining: 0,
+            snapLost: 0,
+            snapRemaining: 0,
+            housingLost: 0,
+            housingRemaining: 0,
+            energyLost: 0,
+            energyRemaining: 0,
+            taxLost: 0,
+            pellLost: 0,
+            medicareLost: 0,
+            medicaidLost: 0,
 
-            snapCutOff:             1300,
             stateTaxPercentage:     0,
             federalTaxes:           0,
             medicareTax:            0,
@@ -42,12 +50,11 @@ class Counter extends Component {
     }
 
     handleLoad() {
-        console.log("test");
-        //this.updateLossesPerSource('ssiAssistanceValue', 500);
+        this.updateIncomeFromInputForm();
     }
 
     updateIncomeFromInputForm(){
-        let val = document.querySelector("." + "income").valueAsNumber;
+        let val = document.querySelector(".income").valueAsNumber;
         if (isNaN(val)) {
             val = 0;
         }
@@ -56,9 +63,15 @@ class Counter extends Component {
             "income": val
         }, function () {
             this.ssdiLosses();
+            this.ssiLosses();
+            this.snapLosses();
+            this.housingLosses();
+            this.energyLosses();
+            this.taxLosses();
+            this.medicareLosses();
+            //this.medicaidLosses();
         })
     }
-
 
     updateValueFromInputForms(name, caseValue) {
         let val = document.querySelector("." + name).valueAsNumber;
@@ -80,17 +93,37 @@ class Counter extends Component {
                 case "ssi":
                     this.ssiLosses();
                     break;
+                case "snap":
+                    this.snapLosses();
+                    break;
+                case "housing":
+                    this.housingLosses();
+                    break;
+                case "energy":
+                    this.energyLosses();
+                    break;
+                case "tax":
+                    this.taxLosses();
+                    break;
+                case "medicare":
+                    this.medicareLosses();
+                    break;
+                case "medicaid":
+                    this.medicaidLosses();
+                    break;
+                default:
+                    break;
             }
         })
     }
 
     ssdiLosses() {
-        let maxLoss = (this.state.income - 20) / 2; // 490
+        let maxLoss = (this.state.income - 20) / 2;
         if (this.state.income > 20) {
             if (maxLoss <= this.state.ssdiAssistanceValue) {
                 this.setState({
                     "ssdiLost": maxLoss,
-                    "ssdiRemaining": this.state.ssdiRemaining,
+                    "ssdiRemaining": this.state.ssdiRemaining, //TODO Check this
                 })
             } else if (maxLoss > this.state.ssdiAssistanceValue) {
                 this.setState({
@@ -102,8 +135,8 @@ class Counter extends Component {
     }
 
     ssiLosses() {
-        let ssiCutOff = 1180;
-        if (this.state.income >= ssiCutOff) {
+
+        if (this.state.income >= this.ssiCutoff) {
             this.setState({
                 "ssiLost": this.state.ssiAssistanceValue,
                 "ssiRemaining": 0,
@@ -116,8 +149,77 @@ class Counter extends Component {
         }
     }
 
-    render() {
+    snapLosses() {
+        let maxLoss = this.state.income / 3;
+        let remaining = (this.state.snapAssistanceValue - maxLoss);
 
+        if (this.state.snapAssistanceValue >= maxLoss ){
+            this.setState({
+                "snapLost": maxLoss,
+                "snapRemaining": remaining,
+            })
+        } else if (this.state.snapAssistanceValue < maxLoss) {
+            this.setState({
+                "snapLost": this.state.snapAssistanceValue,
+                "snapRemaining": 0,
+            })
+        }
+    }
+
+    housingLosses() {
+        let maxLoss = this.state.income / 3;
+        let remaining = (this.state.housingAssistanceValue - maxLoss);
+
+        if (this.state.housingAssistanceValue >= maxLoss ){
+            this.setState({
+                "housingLost": maxLoss,
+                "housingRemaining": remaining,
+            })
+        } else if (this.state.housingAssistanceValue < maxLoss) {
+            this.setState({
+                "housingLost": this.state.housingAssistanceValue,
+                "housingRemaining": 0,
+            })
+        }
+    }
+
+    energyLosses() {
+        if (this.state.income >= 1485) {
+            this.setState({
+                "energyLost": this.state.energyAssistanceValue,
+                "energyRemaining": 0,
+            })
+        } else {
+            this.setState({
+                "energyLost": 0,
+                "energyRemaining": this.state.energyAssistanceValue,
+            })
+        }
+    }
+
+    taxLosses(){
+        if (this.state.stateTaxPercentage != 0) {
+            let loss = this.state.income * (this.state.stateTaxPercentage / 100);
+            this.setState({
+                "taxLost": loss,
+            })
+        }
+    }
+
+    medicareLosses(){
+        if (this.state.income >= this.ssiCutoff){
+            this.setState({
+                "medicareLost": this.state.medicareAssistanceValue,
+            })
+        } else {
+            this.setState({
+                "medicareLost": 0,
+            })
+        }
+    }
+
+
+    render() {
         const
         income = "income",
         ssiAssistanceValue = "ssiAssistanceValue",
@@ -128,11 +230,8 @@ class Counter extends Component {
         stateTaxPercentage = "stateTaxPercentage",
         medicaidAssistanceValue = "medicaidAssistanceValue",
         medicareAssistanceValue = "medicareAssistanceValue",
-        pellAssistanceValue = "pellAssistanceValue";
+        pellLost = "pellLost";
         //placeholder = [this.state.ssdiLost]
-
-
-
 
         return (
             <div>
@@ -147,7 +246,7 @@ class Counter extends Component {
                         this.state.snapAssistanceValue,
                         this.state.housingAssistanceValue,
                         this.state.energyAssistanceValue,
-                        this.state.pellAssistanceValue,
+                        this.state.pellLost,
                         this.state.medicareAssistanceValue,
                         this.state.medicaidAssistanceValue,
                         this.state.federalTaxes,
@@ -331,63 +430,64 @@ class Counter extends Component {
                             offsetX: 40
                         }
                     }}
-
                 />
                 <br />
                 <form>
                     Income<br />
                     <input type="number" className={`${income}`} onChange={() =>
                         this.updateIncomeFromInputForm()}
-                           defaultValue={this.state.income}/>  Income {`${this.state.income}`} <br/>
+                           defaultValue={this.state.income}/>  Income {`${this.state.income.toFixed(2)}`} <br/>
 
                     SSI Income<br />
                     <input type="number" className={`${ssiAssistanceValue}`} onChange={() =>
                         this.updateValueFromInputForms(ssiAssistanceValue, "ssi")}
-                           defaultValue={this.state.ssiAssistanceValue}/> Lost: {`${this.state.ssiLost}`}<br />
+                           defaultValue={this.state.ssiAssistanceValue}/> Lost: {`${this.state.ssiLost.toFixed(2)}`}<br />
 
                     SSDI Income<br />
                     <input type="number" className={`${ssdiAssistanceValue}`} onChange={() =>
                         this.updateValueFromInputForms(ssdiAssistanceValue, "ssdi")}
-                       defaultValue={this.state.ssdiAssistanceValue}/> Lost: {`${this.state.ssdiLost}`}<br />
+                       defaultValue={this.state.ssdiAssistanceValue}/> Lost: {`${this.state.ssdiLost.toFixed(2)}`}<br />
 
                     SNAP Credit<br />
                     <input type="number" className={`${snapAssistanceValue}`} onChange={() =>
-                        this.updateValueFromInputForms(snapAssistanceValue)}
-                           defaultValue={this.state.snapAssistanceValue}/> Lost:<br />
+                        this.updateValueFromInputForms(snapAssistanceValue, "snap")}
+                           defaultValue={this.state.snapAssistanceValue}/> Lost: {`${this.state.snapLost.toFixed(2)}`}<br />
 
                     Section 8 Credit<br />
                     <input type="number" className={`${housingAssistanceValue}`} onChange={() =>
-                        this.updateValueFromInputForms(housingAssistanceValue)}
-                           defaultValue={this.state.housingAssistanceValue}/> Lost:<br />
+                        this.updateValueFromInputForms(housingAssistanceValue, "housing")}
+                           defaultValue={this.state.housingAssistanceValue}/> Lost: {`${this.state.housingLost.toFixed(2)}`}<br />
 
                     LIEAP Credit<br />
                     <input type="number" className={`${energyAssistanceValue}`} onChange={() =>
-                        this.updateValueFromInputForms(energyAssistanceValue)}
-                           defaultValue={this.state.energyAssistanceValue}/> Lost:<br />
+                        this.updateValueFromInputForms(energyAssistanceValue, "energy")}
+                           defaultValue={this.state.energyAssistanceValue}/> Lost: {`${this.state.energyLost.toFixed(2)}`}<br />
+
+                    State Tax Percentage<br />
+                    <input type="number" className={`${stateTaxPercentage}`} onChange={() =>
+                        this.updateValueFromInputForms(stateTaxPercentage, "tax")}
+                           defaultValue={this.state.stateTaxPercentage}/> Lost: {`${this.state.taxLost.toFixed(2)}`} <br /><br />
 
                     Pell Grant Credit<br />
-                    <input type="number" className={`${pellAssistanceValue}`} onChange={() =>
-                        this.updateValueFromInputForms(pellAssistanceValue)}
-                           defaultValue={this.state.pellAssistanceValue}/> Lost:<br />
+                    <input type="number" className={`${pellLost}`} onChange={() =>
+                        this.updateValueFromInputForms(pellLost, "pell")}
+                           defaultValue={this.state.pellLost}/> Lost: {`${this.state.pellLost.toFixed(2)}`}<br />
 
                     Medicare est. Value<br />
                     <input type="number" className={`${medicareAssistanceValue}`} onChange={() =>
-                        this.updateValueFromInputForms(medicareAssistanceValue)}
-                           defaultValue={this.state.medicareAssistanceValue}/> Lost:<br />
+                        this.updateValueFromInputForms(medicareAssistanceValue, "medicare")}
+                           defaultValue={this.state.medicareAssistanceValue}/> Lost: {`${this.state.medicareLost.toFixed(2)}`}<br />
 
                     Medicaid est. Value<br />
                     <input type="number" className={`${medicaidAssistanceValue}`} onChange={() =>
                         this.updateValueFromInputForms(medicaidAssistanceValue)}
                            defaultValue={this.state.medicaidAssistanceValue}/> Lost:<br />
 
-                    State Tax Percentage<br />
-                    <input type="number" className={`${stateTaxPercentage}`} onChange={() =>
-                        this.updateValueFromInputForms(stateTaxPercentage)}
-                           defaultValue={this.state.stateTaxPercentage}/> Lost: <br />
-
                     <br /><br />
+                    Lost to federal income tax: <br />
                     Lost to medicare tax:  <br />
                     Lost to social security tax: <br />
+
                     Earned:{/*
                         <font color="green">{ earning.toFixed(2) }</font> --- Lost:
                         <font color="red"> { this.state.combinedLoss }</font>*/}
@@ -396,6 +496,5 @@ class Counter extends Component {
         );
     }
 }
-
 
 export default Counter;

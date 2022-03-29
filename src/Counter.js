@@ -5,7 +5,19 @@ class Counter extends Component {
     constructor(props) {
         super(props);
         this.ssiCutoff = 1180;
+        this.ssTaxCutoff = 10700;
+        this.ssTaxPercentage = 6.2;
+        this.medicareTaxPercentage = 0.145;
+        this.federalAfterFica = 92.35;
         this.handleLoad = this.handleLoad.bind(this);
+
+        this.fedBracket = [0, 793.75, 3225, 6875, 13125, 16666, 41666.67];
+        this.fedPercent = [10, 12, 22, 24, 32, 35, 37];
+        this.bracketSpread = [];
+        this.trueBracketSpread = []; // For finding distance between brackets
+        this.fedOwedFromPreviousBracket = [];
+        this.fedOwedFromPreviousBrackets = [];
+
         this.state = {
             income:                 1185,
             ssiAssistanceValue:     146,
@@ -30,11 +42,13 @@ class Counter extends Component {
             pellLost: 0,
             medicareLost: 0,
             medicaidLost: 0,
+            federalTaxLost: 0,
+            medicareTaxLost: 0,
+            ssTaxLost: 0,
+            stateTaxPercentage: 0,
+            combinedLosses: 0,
+            differenceIncomeVsLosses: 0,
 
-            stateTaxPercentage:     0,
-            federalTaxes:           0,
-            medicareTax:            0,
-            ssTax:                  0,
             deductedEarning:        118,
             steps:                  [100, 250, 500, 1000, 1170, 1190, 1500, 2000, 3000,
                                     4000],
@@ -70,6 +84,8 @@ class Counter extends Component {
             this.taxLosses();
             this.medicareLosses();
             this.medicaidLosses();
+            this.fedTaxBracketArray();
+            this.calculateTotalLosses();
         })
     }
 
@@ -111,17 +127,18 @@ class Counter extends Component {
                 default:
                     break;
             }
+            this.calculateTotalLosses();
         })
     }
 
     ssdiLosses() {
         let maxLoss = (this.state.income - 20) / 2;
+        let remainder = (this.state.ssdiAssistanceValue - maxLoss);
         if (this.state.income > 20) {
             if (maxLoss < this.state.ssdiAssistanceValue) {
-                let remainder = (this.state.ssdiAssistanceValue - maxLoss);
                 this.setState({
                     "ssdiLost": maxLoss,
-                    "ssdiRemaining": remainder, //TODO Check this
+                    "ssdiRemaining": remainder,
                 }, function () {
                     this.medicaidLosses();
                 })
@@ -133,6 +150,13 @@ class Counter extends Component {
                     this.medicaidLosses();
                 })
             }
+        } else {
+            this.setState({
+                "ssdiLost": 0,
+                "ssdiRemaining": this.state.ssdiAssistanceValue,
+            }, function () {
+                this.medicaidLosses();
+            })
         }
     }
 
@@ -199,7 +223,7 @@ class Counter extends Component {
     }
 
     taxLosses(){
-        if (this.state.stateTaxPercentage != 0) {
+        if (this.state.stateTaxPercentage !== 0) {
             let loss = this.state.income * (this.state.stateTaxPercentage / 100);
             this.setState({
                 "taxLost": loss,
@@ -220,7 +244,6 @@ class Counter extends Component {
     }
 
     medicaidLosses(){
-        console.log(this.state.ssdiRemaining);
         if (this.state.ssdiRemaining === 0){
             this.setState({
                 "medicaidLost": this.state.medicaidAssistanceValue,
@@ -230,6 +253,111 @@ class Counter extends Component {
                 "medicaidLost": 0,
             })
         }
+    }
+
+// Federal Income Tax ... change Earning to Deducted Earning
+    fedTaxBracketArray() {
+        if (this.fedOwedFromPreviousBrackets.length === 0) {
+            for (let i = 0; i < 6; i++) {
+                this.bracketSpread = this.trueBracketSpread[i] = this.fedBracket[i + 1] - this.fedBracket[i];
+                this.bracketSpread = (this.bracketSpread / 100) * this.fedPercent[i];
+                this.fedOwedFromPreviousBracket.push(this.bracketSpread);
+                this.fedOwedFromPreviousBrackets[i] = this.fedOwedFromPreviousBracket.reduce((acc, val) => {
+                    return acc + val;
+                });
+            }
+        }
+
+        this.setState({
+            "deductedEarning": (this.state.income - 1000) * (this.federalAfterFica / 100),
+        }, function () {
+            this.federalTaxScale();
+        })
+    }
+
+    federalTaxScale() {
+        let totalExpense,
+            remainderFromPreviousTaxBrackets;
+
+        if (this.state.deductedEarning <= this.fedBracket[1]) {
+            totalExpense = (this.state.deductedEarning / 100) * this.fedPercent[0];
+        } else if (this.state.deductedEarning <= this.fedBracket[2]) {
+            remainderFromPreviousTaxBrackets = this.state.deductedEarning - this.fedBracket[1];
+            totalExpense = (remainderFromPreviousTaxBrackets * this.fedPercent[1] / 100) + this.fedOwedFromPreviousBrackets[0];
+        } else if (this.state.deductedEarning <= this.fedBracket[3]) {
+            remainderFromPreviousTaxBrackets = this.state.deductedEarning - this.fedBracket[2];
+            totalExpense = (remainderFromPreviousTaxBrackets * this.fedPercent[2] / 100) + this.fedOwedFromPreviousBrackets[1];
+        } else if (this.state.deductedEarning <= this.fedBracket[4]) {
+            remainderFromPreviousTaxBrackets = this.state.deductedEarning - this.fedBracket[3];
+            totalExpense = (remainderFromPreviousTaxBrackets * this.fedPercent[3] / 100) + this.fedOwedFromPreviousBrackets[2];
+        } else if (this.state.deductedEarning <= this.fedBracket[5]) {
+            remainderFromPreviousTaxBrackets = this.state.deductedEarning - this.fedBracket[4];
+            totalExpense = (remainderFromPreviousTaxBrackets * this.fedPercent[4] / 100) + this.fedOwedFromPreviousBrackets[3];
+        } else if (this.state.deductedEarning <= this.fedBracket[6]) {
+            remainderFromPreviousTaxBrackets = this.state.deductedEarning - this.fedBracket[5];
+            totalExpense = (remainderFromPreviousTaxBrackets * this.fedPercent[5] / 100) + this.fedOwedFromPreviousBrackets[4];
+        } else if (this.state.deductedEarning > this.fedBracket[6]) {
+            remainderFromPreviousTaxBrackets = this.state.deductedEarning - this.fedBracket[6];
+            totalExpense = (remainderFromPreviousTaxBrackets * this.fedPercent[6] / 100) + this.fedOwedFromPreviousBrackets[5];
+        } else {
+            totalExpense = 0;
+        }
+
+        if (0 < totalExpense) {
+            this.setState({
+                "federalTaxLost": totalExpense,
+            }, function() {
+                this.medicareTaxScale()
+                this.ssTaxScale()
+            });
+        } else {
+            this.setState({
+                "federalTaxLost": 0,
+            }, function() {
+                this.medicareTaxScale();
+                this.ssTaxScale();
+            });
+        }
+    }
+
+    medicareTaxScale(){
+        if (this.state.deductedEarning > 0){
+            this.setState({
+                "medicareTaxLost": this.state.deductedEarning * this.medicareTaxPercentage,
+            });
+        } else {
+            this.setState({
+                "medicareTaxLost": 0,
+            });
+        }
+    }
+
+    ssTaxScale() {
+        if (this.state.deductedEarning >= this.ssTaxCutoff) {
+            this.setState({
+                "ssTaxLost": this.ssTaxCutoff * (this.ssTaxPercentage / 100),
+            }, function() {
+                this.calculateTotalLosses();
+            });
+        } else {
+            this.setState({
+                "ssTaxLost": this.state.deductedEarning * (this.ssTaxPercentage / 100),
+            }, function() {
+                this.calculateTotalLosses();
+            });
+        }
+    }
+
+    calculateTotalLosses(){
+        let combinedLosses = (this.state.ssdiLost + this.state.ssiLost + this.state.snapLost + this.state.housingLost +
+            this.state.energyLost + this.state.taxLost + this.state.pellLost + this.state.medicareLost +
+            this.state.medicaidLost + this.state.federalTaxLost + this.state.medicareTaxLost +
+            this.state.ssTaxLost);
+
+        this.setState({
+            "combinedLosses": combinedLosses,
+            "differenceIncomeVsLosses": (this.state.income - combinedLosses),
+        });
     }
 
     render() {
@@ -244,7 +372,6 @@ class Counter extends Component {
         medicaidAssistanceValue = "medicaidAssistanceValue",
         medicareAssistanceValue = "medicareAssistanceValue",
         pellLost = "pellLost";
-        //placeholder = [this.state.ssdiLost]
 
         return (
             <div>
@@ -262,10 +389,10 @@ class Counter extends Component {
                         this.state.pellLost,
                         this.state.medicareAssistanceValue,
                         this.state.medicaidAssistanceValue,
-                        this.state.federalTaxes,
+                        this.state.federalTaxLost,
                         /*State Tax,*/
-                        this.state.medicareTax,
-                        this.state.ssTax,
+                        this.state.medicareTaxLost,
+                        this.state.ssTaxLost,
                         this.state.ssdiLost]}
                     options = {{
                         labels: [
@@ -328,15 +455,15 @@ class Counter extends Component {
                         {
                             name: 'Income',
                             type: 'column',
-                            data: [1.4, 2, 2.5, 1.5, 2.5, 2.8, 3.8, 4.6]
+                            data: [1.4, 2, 2.5, 1.5, 2.5, 2.8, 3.8, 4.6, 8, 8]
                         }, {
                             name: 'Cashflow',
                             type: 'column',
-                            data: [1.1, 3, 3.1, 4, 4.1, 4.9, 6.5, 8.5]
+                            data: [1.1, 3, 3.1, 4, 4.1, 4.9, 6.5, 8.5, 8, 8]
                         }, {
                             name: 'Revenue',
                             type: 'line',
-                            data: [20, 29, 37, 36, 44, 45, 50, 58]
+                            data: [20, 29, 37, 36, 44, 45, 50, 58, 8, 8]
                         }
                         ]}
                     options={{
@@ -358,7 +485,8 @@ class Counter extends Component {
                             offsetX: 110
                         },
                         xaxis: {
-                            categories: [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016],
+                            categories: [100, 250, 500, 1000, 1170, 1190, 1500, 2000, 3000,
+                                4000],
                         },
                         yaxis: [
                             {
@@ -449,7 +577,7 @@ class Counter extends Component {
                     Income<br />
                     <input type="number" className={`${income}`} onChange={() =>
                         this.updateIncomeFromInputForm()}
-                           defaultValue={this.state.income}/>  Income {`${this.state.income.toFixed(2)}`} <br/>
+                           defaultValue={this.state.income}/><br/>
 
                     SSI Income<br />
                     <input type="number" className={`${ssiAssistanceValue}`} onChange={() =>
@@ -481,29 +609,41 @@ class Counter extends Component {
                         this.updateValueFromInputForms(stateTaxPercentage, "tax")}
                            defaultValue={this.state.stateTaxPercentage}/> Lost: {`${this.state.taxLost.toFixed(2)}`} <br /><br />
 
-                    Pell Grant Credit<br />
-                    <input type="number" className={`${pellLost}`} onChange={() =>
-                        this.updateValueFromInputForms(pellLost, "pell")}
-                           defaultValue={this.state.pellLost}/> Lost: {`${this.state.pellLost.toFixed(2)}`}<br />
-
-                    Medicare est. Value<br />
-                    <input type="number" className={`${medicareAssistanceValue}`} onChange={() =>
-                        this.updateValueFromInputForms(medicareAssistanceValue, "medicare")}
-                           defaultValue={this.state.medicareAssistanceValue}/> Lost: {`${this.state.medicareLost.toFixed(2)}`}<br />
+                    <span className={"mainBody"}>We do not know how much medical assistance or the pell grant
+                        (if you have it) is worth <i>to you</i>, so you may either leave these blank or enter a number
+                        that you feel appropriate.
+                        <br /><br />For medicare and the pell, the calculator will assume you're entering
+                        an amount you will lose.
+                        <br /><br />For medicaid, it determines loss by whether or not you're still
+                        receiving any SSI income. {/*TODO swap SSI and SSDI*/}
+                        <br />
+                    </span> <br/><br/>
 
                     Medicaid est. Value<br />
                     <input type="number" className={`${medicaidAssistanceValue}`} onChange={() =>
                         this.updateValueFromInputForms(medicaidAssistanceValue)}
                            defaultValue={this.state.medicaidAssistanceValue}/> Lost: {`${this.state.medicaidLost.toFixed(2)}`}<br />
 
-                    <br /><br />
-                    Lost to federal income tax: <br />
-                    Lost to medicare tax:  <br />
-                    Lost to social security tax: <br />
+                    Medicare est. Value<br />
+                    <input type="number" className={`${medicareAssistanceValue}`} onChange={() =>
+                        this.updateValueFromInputForms(medicareAssistanceValue, "medicare")}
+                           defaultValue={this.state.medicareAssistanceValue}/> Lost: {`${this.state.medicareLost.toFixed(2)}`}<br />
 
-                    Earned:{/*
-                        <font color="green">{ earning.toFixed(2) }</font> --- Lost:
-                        <font color="red"> { this.state.combinedLoss }</font>*/}
+                    Pell Grant Credit<br />
+                    <input type="number" className={`${pellLost}`} onChange={() =>
+                        this.updateValueFromInputForms(pellLost, "pell")}
+                           defaultValue={this.state.pellLost}/> Lost: {`${this.state.pellLost.toFixed(2)}`}<br />
+
+
+
+
+                    <br /><br />
+                    Lost to federal income tax: {`${this.state.federalTaxLost.toFixed(2)}`} <br />
+                    Lost to medicare tax: {`${this.state.medicareTaxLost.toFixed(2)}`} <br />
+                    Lost to social security tax: {`${this.state.ssTaxLost.toFixed(2)}`}<br /><br />
+                    Earned: {`${this.state.income.toFixed(2)}`}<br />
+                    Combined losses: {`${this.state.combinedLosses.toFixed(2)}`}<br />
+                    Difference: {`${this.state.differenceIncomeVsLosses.toFixed(2)}`}
                 </form>
             </div>
         );
@@ -511,3 +651,5 @@ class Counter extends Component {
 }
 
 export default Counter;
+
+//TODO Note that this calc assumes you're a W2 and is made for year X.

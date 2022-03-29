@@ -118,6 +118,9 @@ class Counter extends Component {
                 case "tax":
                     this.taxLosses();
                     break;
+                case "medicaid":
+                    this.medicaidLosses();
+                    break;
                 case "medicare":
                     this.medicareLosses();
                     break;
@@ -241,8 +244,9 @@ class Counter extends Component {
     }
 
     medicaidLosses(){
+        console.log(this.state.ssdiRemaining);
         if (this.state.ssdiRemaining === 0){
-            this.setState({
+             this.setState({
                 "medicaidLost": this.state.medicaidAssistanceValue,
             })
         } else {
@@ -376,6 +380,7 @@ class Counter extends Component {
                     type="donut"
                     width={700}
                     height={800}
+
                     series={[
                         this.state.income,
                         this.state.ssiLost,
@@ -392,6 +397,11 @@ class Counter extends Component {
                         this.state.ssTaxLost,
                     ]}
                     options = {{
+                        colors: [
+                            '#00aa00', '#880000', '#880000', '#AA0000', '#AA0000', '#AA0000', '#AA0000',
+                            '#AA0000', '#AA0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000',
+
+                        ],
                         labels: [
                             "Income",
                             "SSI",
@@ -410,13 +420,13 @@ class Counter extends Component {
                         dataLabels: {
                             enabled: true,
                             formatter: function(val, opts) {
-                                return "$" + opts.w.globals.series[opts.seriesIndex];
+                                return "$" + opts.w.globals.series[opts.seriesIndex].toFixed(2);
                             }
                         },
                         plotOptions: {
                             pie: {
-                                startAngle: -90,
-                                endAngle: 270
+                                startAngle: 0,
+                                endAngle: 360,
                             }
                         },
                         fill: {
@@ -424,11 +434,11 @@ class Counter extends Component {
                         },
                         legend: {
                             formatter: function (val, opts) {
-                                return val + " - $" + opts.w.globals.series[opts.seriesIndex]
+                                return val + " - $" + opts.w.globals.series[opts.seriesIndex].toFixed(2)
                             }
                         },
                         title: {
-                            text: 'Gradient Donut with custom Start-angle'
+                            text: 'Income vs. Losses associated with your income.'
                         },
                         responsive: [{
                             breakpoint: 480,
@@ -487,13 +497,13 @@ class Counter extends Component {
                         <br /><br />For medicare and the pell, the calculator will assume you're entering
                         an amount you will lose.
                         <br /><br />For medicaid, it determines loss by whether or not you're still
-                        receiving any SSI income. {/*TODO swap SSI and SSDI*/}
+                        receiving any SSI income.
                         <br />
                     </span> <br/><br/>
 
                     Medicaid est. Value<br />
                     <input type="number" className={`${medicaidAssistanceValue}`} onChange={() =>
-                        this.updateValueFromInputForms(medicaidAssistanceValue)}
+                        this.updateValueFromInputForms(medicaidAssistanceValue, "medicaid")}
                            defaultValue={this.state.medicaidAssistanceValue}/> Lost: {`${this.state.medicaidLost.toFixed(2)}`}<br />
 
                     Medicare est. Loss<br />

@@ -38,7 +38,7 @@ class Counter extends Component {
             housingRemaining: 0,
             energyLost: 0,
             energyRemaining: 0,
-            taxLost: 0,
+            stateTaxLost: 0,
             pellLost: 0,
             medicareLost: 0,
             medicaidLost: 0,
@@ -347,16 +347,11 @@ class Counter extends Component {
 
     calculateTotalLosses(){
         let combinedLosses = (this.state.ssdiLost + this.state.ssiLost + this.state.snapLost + this.state.housingLost +
-            this.state.energyLost + this.state.taxLost + this.state.pellLost + this.state.medicareLost +
+            this.state.energyLost + this.state.stateTaxLost + this.state.pellLost + this.state.medicareLost +
             this.state.medicaidLost + this.state.federalTaxLost + this.state.medicareTaxLost +
             this.state.ssTaxLost);
 
-        console.log(this.state.ssdiLost, this.state.ssiLost, this.state.snapLost, this.state.housingLost,
-            this.state.energyLost, this.state.taxLost, this.state.pellLost, this.state.medicareLost,
-            this.state.medicaidLost, this.state.federalTaxLost, this.state.medicareTaxLost,
-            this.state.ssTaxLost)
-
-        this.setState({
+         this.setState({
             "combinedLosses": combinedLosses,
             "differenceIncomeVsLosses": (this.state.income - combinedLosses),
         });
@@ -379,23 +374,23 @@ class Counter extends Component {
             <div>
                 <Chart
                     type="donut"
-                    width={600}
-                    height={600}
+                    width={700}
+                    height={800}
                     series={[
                         this.state.income,
-                        this.state.ssiAssistanceValue,
-                        this.state.ssdiRemaining,
-                        this.state.snapAssistanceValue,
-                        this.state.housingAssistanceValue,
-                        this.state.energyAssistanceValue,
+                        this.state.ssiLost,
+                        this.state.ssdiLost,
+                        this.state.snapLost,
+                        this.state.housingLost,
+                        this.state.energyLost,
                         this.state.pellLost,
-                        this.state.medicareAssistanceValue,
-                        this.state.medicaidAssistanceValue,
+                        this.state.medicareLost,
+                        this.state.medicaidLost,
                         this.state.federalTaxLost,
-                        /*State Tax,*/
+                        this.state.stateTaxLost,
                         this.state.medicareTaxLost,
                         this.state.ssTaxLost,
-                        this.state.ssdiLost]}
+                    ]}
                     options = {{
                         labels: [
                             "Income",
@@ -408,10 +403,9 @@ class Counter extends Component {
                             "Medicare",
                             "Medicaid",
                             "Federal Tax",
-                            /*"State Tax",*/
+                            "State Tax",
                             "Medicare Tax",
                             "SS Tax",
-                            "ssdiLost",
                         ],
                         dataLabels: {
                             enabled: true,
@@ -450,130 +444,6 @@ class Counter extends Component {
                     }}
                 > </Chart>
 
-                <Chart
-                    width={600}
-                    height={400}
-                    series={[
-                        {
-                            name: 'Income',
-                            type: 'column',
-                            data: [1.4, 2, 2.5, 1.5, 2.5, 2.8, 3.8, 4.6, 8, 8]
-                        }, {
-                            name: 'Cashflow',
-                            type: 'column',
-                            data: [1.1, 3, 3.1, 4, 4.1, 4.9, 6.5, 8.5, 8, 8]
-                        }, {
-                            name: 'Revenue',
-                            type: 'line',
-                            data: [20, 29, 37, 36, 44, 45, 50, 58, 8, 8]
-                        }
-                        ]}
-                    options={{
-
-                        chart: {
-                            height: 350,
-                            type: 'line',
-                            stacked: false
-                        },
-                        dataLabels: {
-                            enabled: false
-                        },
-                        stroke: {
-                            width: [1, 1, 4]
-                        },
-                        title: {
-                            text: 'XYZ - Stock Analysis (2009 - 2016)',
-                            align: 'left',
-                            offsetX: 110
-                        },
-                        xaxis: {
-                            categories: [100, 250, 500, 1000, 1170, 1190, 1500, 2000, 3000,
-                                4000],
-                        },
-                        yaxis: [
-                            {
-                                seriesName: 'Expenses',
-                                axisTicks: {
-                                    show: true,
-                                },
-                                axisBorder: {
-                                    show: true,
-                                    color: '#008FFB'
-                                },
-                                labels: {
-                                    style: {
-                                        colors: '#008FFB',
-                                    }
-                                },
-                                title: {
-                                    text: "Expenses",
-                                    style: {
-                                        color: '#008FFB',
-                                    }
-                                },
-                                tooltip: {
-                                    enabled: true
-                                }
-                            },
-                            {
-                                seriesName: 'Income',
-                                opposite: true,
-                                axisTicks: {
-                                    show: true,
-                                },
-                                axisBorder: {
-                                    show: true,
-                                    color: '#00E396'
-                                },
-                                labels: {
-                                    style: {
-                                        colors: '#00E396',
-                                    }
-                                },
-                                title: {
-                                    text: "Income",
-                                    style: {
-                                        color: '#00E396',
-                                    }
-                                },
-                            },
-                            {
-                                seriesName: 'Difference',
-                                opposite: true,
-                                axisTicks: {
-                                    show: true,
-                                },
-                                axisBorder: {
-                                    show: true,
-                                    color: '#FEB019'
-                                },
-                                labels: {
-                                    style: {
-                                        colors: '#FEB019',
-                                    },
-                                },
-                                title: {
-                                    text: "Difference (compared to not working)",
-                                    style: {
-                                        color: '#FEB019',
-                                    }
-                                }
-                            },
-                        ],
-                        tooltip: {
-                            fixed: {
-                                enabled: true,
-                                position: 'topLeft', // topRight, topLeft, bottomRight, bottomLeft
-                                offsetY: 30,
-                                offsetX: 60
-                            },
-                        },
-                        legend: {
-                            horizontalAlign: 'left',
-                            offsetX: 40
-                        }
-                    }}
-                />
                 <br />
                 <form>
                     Income<br />
@@ -609,7 +479,7 @@ class Counter extends Component {
                     State Tax Percentage<br />
                     <input type="number" className={`${stateTaxPercentage}`} onChange={() =>
                         this.updateValueFromInputForms(stateTaxPercentage, "tax")}
-                           defaultValue={this.state.stateTaxPercentage}/> Lost: {`${this.state.taxLost.toFixed(2)}`} <br /><br />
+                           defaultValue={this.state.stateTaxPercentage}/> Lost: {`${this.state.stateTaxLost.toFixed(2)}`} <br /><br />
 
                     <span className={"mainBody"}>We do not know how much medical assistance or the pell grant
                         (if you have it) is worth <i>to you</i>, so you may either leave these blank or enter a number

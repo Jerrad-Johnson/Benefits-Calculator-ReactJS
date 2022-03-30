@@ -4,7 +4,7 @@ import Chart from "react-apexcharts";
 class Counter extends Component {
     constructor(props) {
         super(props);
-        this.ssiCutoff = 1180;
+        this.ssdiCutoff = 1180;
         this.ssTaxCutoff = 10700;
         this.ssTaxPercentage = 6.2;
         this.medicareTaxPercentage = 1.45;
@@ -95,6 +95,7 @@ class Counter extends Component {
         if (isNaN(val)) {
             val = 0;
         }
+
         this.setState({
                         [name]: val,
         }, function () {
@@ -130,45 +131,46 @@ class Counter extends Component {
         })
     }
 
-    ssdiLosses() {
+    ssiLosses() {
         let maxLoss = (this.state.income - 20) / 2;
-        let remainder = (this.state.ssdiAssistanceValue - maxLoss);
+        let remainder = (this.state.ssiAssistanceValue - maxLoss);
         if (this.state.income > 20) {
-            if (maxLoss < this.state.ssdiAssistanceValue) {
+            if (maxLoss < this.state.ssiAssistanceValue) {
                 this.setState({
-                    "ssdiLost": maxLoss,
-                    "ssdiRemaining": remainder,
+                    "ssiLost": maxLoss,
+                    "ssiRemaining": remainder,
                 }, function () {
                     this.medicaidLosses();
                 })
-            } else if (maxLoss >= this.state.ssdiAssistanceValue) {
+            } else if (maxLoss >= this.state.ssiAssistanceValue) {
                 this.setState({
-                    "ssdiLost": this.state.ssdiAssistanceValue,
-                    "ssdiRemaining": 0,
+                    "ssiLost": this.state.ssiAssistanceValue,
+                    "ssiRemaining": 0,
                 }, function () {
                     this.medicaidLosses();
                 })
             }
         } else {
             this.setState({
-                "ssdiLost": 0,
-                "ssdiRemaining": this.state.ssdiAssistanceValue,
+                "ssiLost": 0,
+                "ssiRemaining": this.state.ssiAssistanceValue,
             }, function () {
                 this.medicaidLosses();
             })
         }
     }
 
-    ssiLosses() {
-        if (this.state.income >= this.ssiCutoff) {
+
+    ssdiLosses() {
+        if (this.state.income >= this.ssdiCutoff) {
             this.setState({
-                "ssiLost": this.state.ssiAssistanceValue,
-                "ssiRemaining": 0,
+                "ssdiLost": this.state.ssdiAssistanceValue,
+                "ssdiRemaining": 0,
             })
         } else {
             this.setState({
-                "ssiLost": 0,
-                "ssiRemaining": this.state.ssiAssistanceValue,
+                "ssdiLost": 0,
+                "ssdiRemaining": this.state.ssdiAssistanceValue,
             })
         }
     }

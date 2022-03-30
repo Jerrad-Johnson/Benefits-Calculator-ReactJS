@@ -95,9 +95,8 @@ class Counter extends Component {
         if (isNaN(val)) {
             val = 0;
         }
-
         this.setState({
-            [name]: val
+                        [name]: val,
         }, function () {
             switch (caseValue) {
                 case "ssdi":
@@ -223,10 +222,11 @@ class Counter extends Component {
     }
 
     taxLosses(){
+
         if (this.state.stateTaxPercentage !== 0) {
             let loss = this.state.income * (this.state.stateTaxPercentage / 100);
             this.setState({
-                "taxLost": loss,
+                "stateTaxLost": loss,
             })
         }
     }
@@ -244,7 +244,6 @@ class Counter extends Component {
     }
 
     medicaidLosses(){
-        console.log(this.state.ssdiRemaining);
         if (this.state.ssdiRemaining === 0){
              this.setState({
                 "medicaidLost": this.state.medicaidAssistanceValue,
@@ -420,7 +419,7 @@ class Counter extends Component {
                         dataLabels: {
                             enabled: true,
                             formatter: function(val, opts) {
-                                return "$" + opts.w.globals.series[opts.seriesIndex].toFixed(2);
+                                return "$ " + opts.w.globals.series[opts.seriesIndex].toFixed(2);
                             }
                         },
                         plotOptions: {

@@ -96,7 +96,7 @@ hr {
 input, select {
   vertical-align:middle;
 }
-
+/*
 body {
   background-color: #fff;
   color: #000;
@@ -121,41 +121,10 @@ li {
   list-style-type: none;
   margin: 10px 10px 20px 10px;
 }
+*/
 
-.container{
-  max-width:900px;
-  margin: auto;
-  background-color: #aaa;
-  padding: 20px;
+body{
+  @apply bg-gray-200;
 }
 
-@media all and (max-width: 1199px){
-  .graph, .forms {
-    margin:auto;
-    max-width: 600px;
-  }
-
-  .forms {
-    max-width: 600px;
-  }
-
-}
-
-@media all and (min-width: 1200px){
-  .graph, .forms{
-    display: inline-block;
-  }
-
-  .container > .graph {
-
-  }
-  .container > .forms {
-    float:left;
-    max-width: 280px;
-  }
-
-  .container {
-    overflow: auto;
-  }
-}
-
+/*TODO Chart needs to center below md size */

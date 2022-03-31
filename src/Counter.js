@@ -376,157 +376,173 @@ class Counter extends Component {
         pellLost = "pellLost";
 
         return (
-            <div className={"container text-gray-700"}>
-                <div className={"graph"}>
-                <Chart
-                    type="donut"
-                    width={600}
-                    height={600}
+            <div className={"container bg-gray-300 border-solid border-2 border-gray-400 text-gray-700 p-5 md:flex md:flex-row-reverse md:justify-between mx-auto md:w-140 leading-5 drop-shadow-md rounded-lg md:max-w-5xl"}>
+                <div className={"graph md:mx-auto sm:mx-auto" }>
+                        <Chart
+                            type="donut"
+                            width={550}
+                            height={550}
 
-                    series={[
-                        this.state.income,
-                        this.state.ssiLost,
-                        this.state.ssdiLost,
-                        this.state.snapLost,
-                        this.state.housingLost,
-                        this.state.energyLost,
-                        this.state.pellLost,
-                        this.state.medicareLost,
-                        this.state.medicaidLost,
-                        this.state.federalTaxLost,
-                        this.state.stateTaxLost,
-                        this.state.medicareTaxLost,
-                        this.state.ssTaxLost,
-                    ]}
-                    options = {{
-                        colors: [
-                            '#00aa00', '#880000', '#880000', '#AA0000', '#AA0000', '#AA0000', '#AA0000',
-                            '#AA0000', '#AA0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000',
+                            series={[
+                                this.state.income,
+                                this.state.ssiLost,
+                                this.state.ssdiLost,
+                                this.state.snapLost,
+                                this.state.housingLost,
+                                this.state.energyLost,
+                                this.state.pellLost,
+                                this.state.medicareLost,
+                                this.state.medicaidLost,
+                                this.state.federalTaxLost,
+                                this.state.stateTaxLost,
+                                this.state.medicareTaxLost,
+                                this.state.ssTaxLost,
+                            ]}
+                            options = {{
+                                colors: [
+                                    '#00aa00', '#880000', '#880000', '#AA0000', '#AA0000', '#AA0000', '#AA0000',
+                                    '#AA0000', '#AA0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000',
 
-                        ],
-                        labels: [
-                            "Income",
-                            "SSI",
-                            "SSDI",
-                            "SNAP",
-                            "Sec. 8",
-                            "LIEAP",
-                            "Pell Grant",
-                            "Medicare",
-                            "Medicaid",
-                            "Federal Tax",
-                            "State Tax",
-                            "Medicare Tax",
-                            "SS Tax",
-                        ],
-                        dataLabels: {
-                            enabled: true,
-                            formatter: function(val, opts) {
-                                return "$" + opts.w.globals.series[opts.seriesIndex].toFixed(2);
-                            }
-                        },
-                        plotOptions: {
-                            pie: {
-                                startAngle: 0,
-                                endAngle: 360,
-                            }
-                        },
-                        fill: {
-                            type: 'gradient',
-                        },
-                        legend: {
-                            formatter: function (val, opts) {
-                                return val + " - $" + opts.w.globals.series[opts.seriesIndex].toFixed(2)
-                            }
-                        },
-                        title: {
-                            text: 'Income vs. Losses associated with your income.'
-                        },
-                        responsive: [{
-                            breakpoint: 1200,
-                            options: {
-                                chart: {
-                                    width: 400,
+                                ],
+                                labels: [
+                                    "Income",
+                                    "SSI",
+                                    "SSDI",
+                                    "SNAP",
+                                    "Sec. 8",
+                                    "LIEAP",
+                                    "Pell Grant",
+                                    "Medicare",
+                                    "Medicaid",
+                                    "Federal Tax",
+                                    "State Tax",
+                                    "Medicare Tax",
+                                    "SS Tax",
+                                ],
+                                dataLabels: {
+                                    enabled: true,
+                                    formatter: function(val, opts) {
+                                        return "$" + opts.w.globals.series[opts.seriesIndex].toFixed(2);
+                                    }
+                                },
+                                plotOptions: {
+                                    pie: {
+                                        startAngle: 0,
+                                        endAngle: 360,
+                                    }
+                                },
+                                fill: {
+                                    type: 'gradient',
                                 },
                                 legend: {
-                                    position: 'bottom'
-                                }
-                            }
-                        }]
-                    }}
-                > </Chart>
+                                    formatter: function (val, opts) {
+                                        return val + " - $" + opts.w.globals.series[opts.seriesIndex].toFixed(2)
+                                    },
+                                    position: 'bottom',
+                                    fontSize: '12px',
+                                    itemMargin:{
+                                        horizontal: 8,
+                                    },
+                                },
+                                title: {
+                                    text: 'Income vs. Losses.'
+                                },
+                                responsive: [{
+                                    breakpoint: 768,
+                                    options: {
+                                        chart: {
+                                            width: 350,
+                                        },
+                                        legend: {
+                                            position: 'bottom'
+                                        }
+                                    }
+                                }]
+                            }}
+                        > </Chart>
+                    <center>
+                    <span className={"block mt-10 font-bold text-xl drop-shadow-md"}> Difference <br /><span className={"leading-6"}> {`${this.state.differenceIncomeVsLosses.toFixed(2)}`}</span></span>
+                    </center>
                 </div>
 
-                <div className={"forms"}>
-                <form>
-                    <span className={"text-lg"}>Income</span><br />
-                    <input type="number" id={`${income}`} onChange={() =>
-                        this.updateIncomeFromInputForm()}
-                           defaultValue={this.state.income}/><br/>
 
-                    <span className={"text-lg"}>SSI Income</span><br/>
-                    <input type="number" id={`${ssiAssistanceValue}`} className={"rounded font-semibold py-0.5 pl-1 w-24"} onChange={() =>
-                        this.updateValueFromInputForms(ssiAssistanceValue, "ssi")}
-                           defaultValue={this.state.ssiAssistanceValue}/> Lost: <span className={"text-red-600"}>{`${this.state.ssiLost.toFixed(2)}`}</span><br />
+                <div className={"forms md:w-60 font-serif"}>
+                    <div className={"sm:max-w-sm"}>
+                        <form>
+                        <span className={"form-title"}>Income</span><br />
+                        <input type="number" id={`${income}`} className={"font-sans rounded font-semibold py-0.5 pl-1 w-24 mr-2"} onChange={() =>
+                            this.updateIncomeFromInputForm()}
+                               defaultValue={this.state.income}/><br/>
 
-                    <span className={"text-lg"}>SSDI Income</span><br/>
-                    <input type="number" id={`${ssdiAssistanceValue}`} className={"rounded font-semibold py-0.5 pl-1 w-24"} onChange={() =>
-                        this.updateValueFromInputForms(ssdiAssistanceValue, "ssdi")}
-                       defaultValue={this.state.ssdiAssistanceValue}/> Lost: <span className={"text-red-600"}>{`${this.state.ssdiLost.toFixed(2)}`}</span><br />
+                        <span className={"form-title"}>SSI Income</span><br/>
+                        <input type="number" id={`${ssiAssistanceValue}`} className={"font-sans rounded font-semibold py-0.5 pl-1 w-24 mr-2"} onChange={() =>
+                            this.updateValueFromInputForms(ssiAssistanceValue, "ssi")}
+                               defaultValue={this.state.ssiAssistanceValue}/>  <span className={"text-red-600"}>{`${this.state.ssiLost.toFixed(2)}`}</span><br />
 
-                    <span className={"text-lg"}>SNAP Credit</span><br/>
-                    <input type="number" id={`${snapAssistanceValue}`} className={"rounded font-semibold py-0.5 pl-1 w-24"} onChange={() =>
-                        this.updateValueFromInputForms(snapAssistanceValue, "snap")}
-                           defaultValue={this.state.snapAssistanceValue}/> Lost: <span className={"text-red-600"}>{`${this.state.snapLost.toFixed(2)}`}</span><br />
+                        <span className={"form-title"}>SSDI Income</span><br/>
+                        <input type="number" id={`${ssdiAssistanceValue}`} className={"font-sans rounded font-semibold py-0.5 pl-1 w-24 mr-2"} onChange={() =>
+                            this.updateValueFromInputForms(ssdiAssistanceValue, "ssdi")}
+                           defaultValue={this.state.ssdiAssistanceValue}/>  <span className={"text-red-600"}>{`${this.state.ssdiLost.toFixed(2)}`}</span><br />
 
-                    <span className={"text-lg"}>Section 8 Credit</span><br/>
-                    <input type="number" id={`${housingAssistanceValue}`} className={"rounded font-semibold py-0.5 pl-1 w-24"} onChange={() =>
-                        this.updateValueFromInputForms(housingAssistanceValue, "housing")}
-                           defaultValue={this.state.housingAssistanceValue}/> Lost: <span className={"text-red-600"}>{`${this.state.housingLost.toFixed(2)}`}</span><br />
+                        <span className={"form-title"}>SNAP Credit</span><br/>
+                        <input type="number" id={`${snapAssistanceValue}`} className={"font-sans rounded font-semibold py-0.5 pl-1 w-24 mr-2"} onChange={() =>
+                            this.updateValueFromInputForms(snapAssistanceValue, "snap")}
+                               defaultValue={this.state.snapAssistanceValue}/>  <span className={"text-red-600"}>{`${this.state.snapLost.toFixed(2)}`}</span><br />
 
-                    <span className={"text-lg"}>LIEAP Credit</span><br/>
-                    <input type="number" id={`${energyAssistanceValue}`} className={"rounded font-semibold py-0.5 pl-1 w-24"} onChange={() =>
-                        this.updateValueFromInputForms(energyAssistanceValue, "energy")}
-                           defaultValue={this.state.energyAssistanceValue}/> Lost: <span className={"text-red-600"}>{`${this.state.energyLost.toFixed(2)}`}</span><br />
+                        <span className={"form-title"}>Section 8 Credit</span><br/>
+                        <input type="number" id={`${housingAssistanceValue}`} className={"font-sans rounded font-semibold py-0.5 pl-1 w-24 mr-2"} onChange={() =>
+                            this.updateValueFromInputForms(housingAssistanceValue, "housing")}
+                               defaultValue={this.state.housingAssistanceValue}/>  <span className={"text-red-600"}>{`${this.state.housingLost.toFixed(2)}`}</span><br />
 
-                    <span className={"text-lg"}>State Tax Percentage</span><br/>
-                    <input type="number" id={`${stateTaxPercentage}`} className={"rounded font-semibold py-0.5 pl-1 w-24"} onChange={() =>
-                        this.updateValueFromInputForms(stateTaxPercentage, "tax")}
-                           defaultValue={this.state.stateTaxPercentage}/> Lost: <span className={"text-red-600"}>{`${this.state.stateTaxLost.toFixed(2)}`}</span><br /><br />
+                        <span className={"form-title"}>LIEAP Credit</span><br/>
+                        <input type="number" id={`${energyAssistanceValue}`} className={"font-sans rounded font-semibold py-0.5 pl-1 w-24 mr-2"} onChange={() =>
+                            this.updateValueFromInputForms(energyAssistanceValue, "energy")}
+                               defaultValue={this.state.energyAssistanceValue}/>  <span className={"text-red-600"}>{`${this.state.energyLost.toFixed(2)}`}</span><br />
 
-                    <span className={"mainBody"}>We do not know how much medical assistance or the pell grant
-                        (if you have it) is worth <i>to you</i>, so you may either leave these blank or enter a number
-                        that you feel appropriate.
-                        <br /><br />For medicare and the pell, the calculator will assume you're entering
-                        an amount you will lose.
-                        <br /><br />For medicaid, it determines loss by whether or not you're still
-                        receiving any SSDI income.
+                        <span className={"form-title"}>State Tax Percentage</span><br/>
+                        <input type="number" id={`${stateTaxPercentage}`} className={"font-sans rounded font-semibold py-0.5 pl-1 w-24 mr-2"} onChange={() =>
+                            this.updateValueFromInputForms(stateTaxPercentage, "tax")}
+                               defaultValue={this.state.stateTaxPercentage}/>  <span className={"text-red-600"}>{`${this.state.stateTaxLost.toFixed(2)}`}</span><br /><br />
+                        </form>
+                    </div>
+
+                    <div className={"max-w-xs sm:max-w-sm"}>
+                        <span className={"mainBody"}>We do not know how much medical assistance or the pell grant
+                            (if you have it) is worth <i>to you</i>, so you may either leave these blank or enter a number
+                            that you feel appropriate.
+                            <br /><br />For medicare and the pell, the calculator will assume you're entering
+                            an amount you will lose.
+                            <br /><br />For medicaid, it determines loss by whether or not you're still
+                            receiving any SSDI income.
+                        </span> <br/><br/>
+                    </div>
+
+                    <div className={"max-w-xs sm:max-w-sm"}>
+                        <form>
+                        <span className={"form-title"}>Medicaid Value</span><br/>
+                        <input type="number" id={`${medicaidAssistanceValue}`} className={"font-sans rounded font-semibold py-0.5 pl-1 w-24 mr-2"} onChange={() =>
+                            this.updateValueFromInputForms(medicaidAssistanceValue, "medicaid")}
+                               defaultValue={this.state.medicaidAssistanceValue}/>  <span className={"text-red-600"}>{`${this.state.medicaidLost.toFixed(2)}`}</span><br />
+
+                        <span className={"form-title"}>Medicare est. Loss</span><br/>
+                        <input type="number" id={`${medicareAssistanceValue}`} className={"font-sans rounded font-semibold py-0.5 pl-1 w-24 mr-2"} onChange={() =>
+                            this.updateValueFromInputForms(medicareAssistanceValue, "medicare")}
+                               defaultValue={this.state.medicareAssistanceValue}/>  <span className={"text-red-600"}>{`${this.state.medicareLost.toFixed(2)}`}</span><br />
+
+                        <span className={"form-title"}>Pell Grant est. Loss</span><br/>
+                        <input type="number" id={`${pellLost}`} className={"font-sans rounded font-semibold py-0.5 pl-1 w-24 mr-2"} onChange={() =>
+                            this.updateValueFromInputForms(pellLost, "pell")}
+                               defaultValue={this.state.pellLost}/>  <span className={"text-red-600"}>{`${this.state.pellLost.toFixed(2)}`}</span><br />
+
                         <br />
-                    </span> <br/><br/>
+                        Lost to federal income tax: <span className={"text-red-600"}>{`${this.state.federalTaxLost.toFixed(2)}`}</span><br />
+                        Lost to medicare tax: <span className={"text-red-600"}>{`${this.state.medicareTaxLost.toFixed(2)}`}</span><br />
+                        Lost to social security tax: <span className={"text-red-600"}>{`${this.state.ssTaxLost.toFixed(2)}`}</span><br /><br />
+                        Earned: <span className={"text-green-600"}>{`${this.state.income.toFixed(2)}`}</span><br />
+                        Combined losses: <span className={"text-red-600"}>{`${this.state.combinedLosses.toFixed(2)}`}</span><br />
 
-                    <span className={"text-lg"}>Medicaid Value</span><br/>
-                    <input type="number" id={`${medicaidAssistanceValue}`} onChange={() =>
-                        this.updateValueFromInputForms(medicaidAssistanceValue, "medicaid")}
-                           defaultValue={this.state.medicaidAssistanceValue}/> Lost: <span className={"text-red-600"}>{`${this.state.medicaidLost.toFixed(2)}`}</span><br />
-
-                    <span className={"text-lg"}>Medicare est. Loss</span><br/>
-                    <input type="number" id={`${medicareAssistanceValue}`} onChange={() =>
-                        this.updateValueFromInputForms(medicareAssistanceValue, "medicare")}
-                           defaultValue={this.state.medicareAssistanceValue}/> Lost: <span className={"text-red-600"}>{`${this.state.medicareLost.toFixed(2)}`}</span><br />
-
-                    <span className={"text-lg"}>Pell Grant est. Loss</span><br/>
-                    <input type="number" id={`${pellLost}`} onChange={() =>
-                        this.updateValueFromInputForms(pellLost, "pell")}
-                           defaultValue={this.state.pellLost}/> Lost: <span className={"text-red-600"}>{`${this.state.pellLost.toFixed(2)}`}</span><br />
-
-                    <br /><br />
-                    Lost to federal income tax: <span className={"text-red-600"}>{`${this.state.federalTaxLost.toFixed(2)}`}</span><br />
-                    Lost to medicare tax: <span className={"text-red-600"}>{`${this.state.medicareTaxLost.toFixed(2)}`}</span><br />
-                    Lost to social security tax: <span className={"text-red-600"}>{`${this.state.ssTaxLost.toFixed(2)}`}</span><br /><br />
-                    Earned: <span className={"text-red-600"}>{`${this.state.income.toFixed(2)}`}</span><br />
-                    Combined losses: <span className={"text-red-600"}>{`${this.state.combinedLosses.toFixed(2)}`}</span><br />
-                    Difference: {`${this.state.differenceIncomeVsLosses.toFixed(2)}`}
-                </form>
+                        </form>
+                    </div>
                 </div>
             </div>
         );

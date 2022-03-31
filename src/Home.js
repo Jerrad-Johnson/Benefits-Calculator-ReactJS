@@ -5,7 +5,7 @@ import Navigation from "./Navigation";
 
 function Home() {
     return (
-        <div>
+        <div className={""}>
            {/* <Router>
                 <Navigation/>
                 <Routes>

@@ -65,7 +65,7 @@ class Counter extends Component {
     }
 
     updateIncomeFromInputForm(){
-        let val = document.querySelector(".income").valueAsNumber;
+        let val = document.querySelector("#income").valueAsNumber;
         if (isNaN(val)) {
             val = 0;
         }
@@ -87,7 +87,7 @@ class Counter extends Component {
     }
 
     updateValueFromInputForms(name, caseValue) {
-        let val = document.querySelector("." + name).valueAsNumber;
+        let val = document.querySelector("#" + name).valueAsNumber;
         if (typeof caseValue === 'undefined') {
             let caseValue = "nothing";
         }
@@ -234,7 +234,7 @@ class Counter extends Component {
     }
 
     medicareLosses(){
-        if (this.state.income >= this.ssiCutoff){
+        if (this.state.income >= this.ssdiCutoff){
             this.setState({
                 "medicareLost": this.state.medicareAssistanceValue,
             })
@@ -376,11 +376,12 @@ class Counter extends Component {
         pellLost = "pellLost";
 
         return (
-            <div>
+            <div className={"container text-gray-700"}>
+                <div className={"graph"}>
                 <Chart
                     type="donut"
-                    width={700}
-                    height={800}
+                    width={600}
+                    height={600}
 
                     series={[
                         this.state.income,
@@ -421,7 +422,7 @@ class Counter extends Component {
                         dataLabels: {
                             enabled: true,
                             formatter: function(val, opts) {
-                                return "$ " + opts.w.globals.series[opts.seriesIndex].toFixed(2);
+                                return "$" + opts.w.globals.series[opts.seriesIndex].toFixed(2);
                             }
                         },
                         plotOptions: {
@@ -442,10 +443,10 @@ class Counter extends Component {
                             text: 'Income vs. Losses associated with your income.'
                         },
                         responsive: [{
-                            breakpoint: 480,
+                            breakpoint: 1200,
                             options: {
                                 chart: {
-                                    width: 200
+                                    width: 400,
                                 },
                                 legend: {
                                     position: 'bottom'
@@ -454,43 +455,44 @@ class Counter extends Component {
                         }]
                     }}
                 > </Chart>
+                </div>
 
-                <br />
+                <div className={"forms"}>
                 <form>
-                    Income<br />
-                    <input type="number" className={`${income}`} onChange={() =>
+                    <span className={"text-lg"}>Income</span><br />
+                    <input type="number" id={`${income}`} onChange={() =>
                         this.updateIncomeFromInputForm()}
                            defaultValue={this.state.income}/><br/>
 
-                    SSI Income<br />
-                    <input type="number" className={`${ssiAssistanceValue}`} onChange={() =>
+                    <span className={"text-lg"}>SSI Income</span><br/>
+                    <input type="number" id={`${ssiAssistanceValue}`} className={"rounded font-semibold py-0.5 pl-1 w-24"} onChange={() =>
                         this.updateValueFromInputForms(ssiAssistanceValue, "ssi")}
-                           defaultValue={this.state.ssiAssistanceValue}/> Lost: {`${this.state.ssiLost.toFixed(2)}`}<br />
+                           defaultValue={this.state.ssiAssistanceValue}/> Lost: <span className={"text-red-600"}>{`${this.state.ssiLost.toFixed(2)}`}</span><br />
 
-                    SSDI Income<br />
-                    <input type="number" className={`${ssdiAssistanceValue}`} onChange={() =>
+                    <span className={"text-lg"}>SSDI Income</span><br/>
+                    <input type="number" id={`${ssdiAssistanceValue}`} className={"rounded font-semibold py-0.5 pl-1 w-24"} onChange={() =>
                         this.updateValueFromInputForms(ssdiAssistanceValue, "ssdi")}
-                       defaultValue={this.state.ssdiAssistanceValue}/> Lost: {`${this.state.ssdiLost.toFixed(2)}`}<br />
+                       defaultValue={this.state.ssdiAssistanceValue}/> Lost: <span className={"text-red-600"}>{`${this.state.ssdiLost.toFixed(2)}`}</span><br />
 
-                    SNAP Credit<br />
-                    <input type="number" className={`${snapAssistanceValue}`} onChange={() =>
+                    <span className={"text-lg"}>SNAP Credit</span><br/>
+                    <input type="number" id={`${snapAssistanceValue}`} className={"rounded font-semibold py-0.5 pl-1 w-24"} onChange={() =>
                         this.updateValueFromInputForms(snapAssistanceValue, "snap")}
-                           defaultValue={this.state.snapAssistanceValue}/> Lost: {`${this.state.snapLost.toFixed(2)}`}<br />
+                           defaultValue={this.state.snapAssistanceValue}/> Lost: <span className={"text-red-600"}>{`${this.state.snapLost.toFixed(2)}`}</span><br />
 
-                    Section 8 Credit<br />
-                    <input type="number" className={`${housingAssistanceValue}`} onChange={() =>
+                    <span className={"text-lg"}>Section 8 Credit</span><br/>
+                    <input type="number" id={`${housingAssistanceValue}`} className={"rounded font-semibold py-0.5 pl-1 w-24"} onChange={() =>
                         this.updateValueFromInputForms(housingAssistanceValue, "housing")}
-                           defaultValue={this.state.housingAssistanceValue}/> Lost: {`${this.state.housingLost.toFixed(2)}`}<br />
+                           defaultValue={this.state.housingAssistanceValue}/> Lost: <span className={"text-red-600"}>{`${this.state.housingLost.toFixed(2)}`}</span><br />
 
-                    LIEAP Credit<br />
-                    <input type="number" className={`${energyAssistanceValue}`} onChange={() =>
+                    <span className={"text-lg"}>LIEAP Credit</span><br/>
+                    <input type="number" id={`${energyAssistanceValue}`} className={"rounded font-semibold py-0.5 pl-1 w-24"} onChange={() =>
                         this.updateValueFromInputForms(energyAssistanceValue, "energy")}
-                           defaultValue={this.state.energyAssistanceValue}/> Lost: {`${this.state.energyLost.toFixed(2)}`}<br />
+                           defaultValue={this.state.energyAssistanceValue}/> Lost: <span className={"text-red-600"}>{`${this.state.energyLost.toFixed(2)}`}</span><br />
 
-                    State Tax Percentage<br />
-                    <input type="number" className={`${stateTaxPercentage}`} onChange={() =>
+                    <span className={"text-lg"}>State Tax Percentage</span><br/>
+                    <input type="number" id={`${stateTaxPercentage}`} className={"rounded font-semibold py-0.5 pl-1 w-24"} onChange={() =>
                         this.updateValueFromInputForms(stateTaxPercentage, "tax")}
-                           defaultValue={this.state.stateTaxPercentage}/> Lost: {`${this.state.stateTaxLost.toFixed(2)}`} <br /><br />
+                           defaultValue={this.state.stateTaxPercentage}/> Lost: <span className={"text-red-600"}>{`${this.state.stateTaxLost.toFixed(2)}`}</span><br /><br />
 
                     <span className={"mainBody"}>We do not know how much medical assistance or the pell grant
                         (if you have it) is worth <i>to you</i>, so you may either leave these blank or enter a number
@@ -498,33 +500,34 @@ class Counter extends Component {
                         <br /><br />For medicare and the pell, the calculator will assume you're entering
                         an amount you will lose.
                         <br /><br />For medicaid, it determines loss by whether or not you're still
-                        receiving any SSI income.
+                        receiving any SSDI income.
                         <br />
                     </span> <br/><br/>
 
-                    Medicaid est. Value<br />
-                    <input type="number" className={`${medicaidAssistanceValue}`} onChange={() =>
+                    <span className={"text-lg"}>Medicaid Value</span><br/>
+                    <input type="number" id={`${medicaidAssistanceValue}`} onChange={() =>
                         this.updateValueFromInputForms(medicaidAssistanceValue, "medicaid")}
-                           defaultValue={this.state.medicaidAssistanceValue}/> Lost: {`${this.state.medicaidLost.toFixed(2)}`}<br />
+                           defaultValue={this.state.medicaidAssistanceValue}/> Lost: <span className={"text-red-600"}>{`${this.state.medicaidLost.toFixed(2)}`}</span><br />
 
-                    Medicare est. Loss<br />
-                    <input type="number" className={`${medicareAssistanceValue}`} onChange={() =>
+                    <span className={"text-lg"}>Medicare est. Loss</span><br/>
+                    <input type="number" id={`${medicareAssistanceValue}`} onChange={() =>
                         this.updateValueFromInputForms(medicareAssistanceValue, "medicare")}
-                           defaultValue={this.state.medicareAssistanceValue}/> Lost: {`${this.state.medicareLost.toFixed(2)}`}<br />
+                           defaultValue={this.state.medicareAssistanceValue}/> Lost: <span className={"text-red-600"}>{`${this.state.medicareLost.toFixed(2)}`}</span><br />
 
-                    Pell Grant est. Loss<br />
-                    <input type="number" className={`${pellLost}`} onChange={() =>
+                    <span className={"text-lg"}>Pell Grant est. Loss</span><br/>
+                    <input type="number" id={`${pellLost}`} onChange={() =>
                         this.updateValueFromInputForms(pellLost, "pell")}
-                           defaultValue={this.state.pellLost}/> Lost: {`${this.state.pellLost.toFixed(2)}`}<br />
+                           defaultValue={this.state.pellLost}/> Lost: <span className={"text-red-600"}>{`${this.state.pellLost.toFixed(2)}`}</span><br />
 
                     <br /><br />
-                    Lost to federal income tax: {`${this.state.federalTaxLost.toFixed(2)}`} <br />
-                    Lost to medicare tax: {`${this.state.medicareTaxLost.toFixed(2)}`} <br />
-                    Lost to social security tax: {`${this.state.ssTaxLost.toFixed(2)}`}<br /><br />
-                    Earned: {`${this.state.income.toFixed(2)}`}<br />
-                    Combined losses: {`${this.state.combinedLosses.toFixed(2)}`}<br />
+                    Lost to federal income tax: <span className={"text-red-600"}>{`${this.state.federalTaxLost.toFixed(2)}`}</span><br />
+                    Lost to medicare tax: <span className={"text-red-600"}>{`${this.state.medicareTaxLost.toFixed(2)}`}</span><br />
+                    Lost to social security tax: <span className={"text-red-600"}>{`${this.state.ssTaxLost.toFixed(2)}`}</span><br /><br />
+                    Earned: <span className={"text-red-600"}>{`${this.state.income.toFixed(2)}`}</span><br />
+                    Combined losses: <span className={"text-red-600"}>{`${this.state.combinedLosses.toFixed(2)}`}</span><br />
                     Difference: {`${this.state.differenceIncomeVsLosses.toFixed(2)}`}
                 </form>
+                </div>
             </div>
         );
     }

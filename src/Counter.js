@@ -376,7 +376,9 @@ class Counter extends Component {
         pellLost = "pellLost";
 
         return (
-            <div className={"container bg-gray-300 border-solid border-2 border-gray-400 text-gray-700 p-5 md:flex md:flex-row-reverse md:justify-between mx-auto md:w-140 leading-5 drop-shadow-md rounded-lg md:max-w-5xl"}>
+            <div className={"container bg-gray-300 border-solid border-2 border-gray-400 text-gray-700 p-5 " +
+                "md:flex md:flex-row-reverse md:justify-between mx-auto md:w-140 leading-5 drop-shadow-md " +
+                "rounded-lg md:max-w-5xl"}>
                 <div className={"graph md:mx-auto sm:mx-auto" }>
                         <Chart
                             type="donut"
@@ -461,48 +463,64 @@ class Counter extends Component {
                             }}
                         > </Chart>
                     <center>
-                    <span className={"block mt-10 font-bold text-xl drop-shadow-md"}> Difference <br /><span className={"leading-6"}> {`${this.state.differenceIncomeVsLosses.toFixed(2)}`}</span></span>
+                        <span className={"block mt-10 font-bold text-xl drop-shadow-md"}> Difference <br />
+                            {`${this.state.differenceIncomeVsLosses.toFixed(2)}`}</span><br /><br />
                     </center>
                 </div>
 
 
                 <div className={"forms md:w-60 font-serif"}>
                     <div className={"sm:max-w-sm"}>
+                        <span className={"font-bold"}> Please enter the values that match your situation.</span>
+                        <br /><br />
                         <form>
-                        <span className={"form-title"}>Income</span><br />
-                        <input type="number" id={`${income}`} className={"font-sans rounded font-semibold py-0.5 pl-1 w-24 mr-2"} onChange={() =>
+                        <span className={"form-title"}>Earned Income</span><br />
+                        <input type="number" id={`${income}`} className={"font-sans rounded font-semibold " +
+                            "py-0.5 pl-1 w-24 mr-2"} onChange={() =>
                             this.updateIncomeFromInputForm()}
                                defaultValue={this.state.income}/><br/>
 
                         <span className={"form-title"}>SSI Income</span><br/>
-                        <input type="number" id={`${ssiAssistanceValue}`} className={"font-sans rounded font-semibold py-0.5 pl-1 w-24 mr-2"} onChange={() =>
+                        <input type="number" id={`${ssiAssistanceValue}`} className={"font-sans rounded font-semibold " +
+                            "py-0.5 pl-1 w-24 mr-2"} onChange={() =>
                             this.updateValueFromInputForms(ssiAssistanceValue, "ssi")}
-                               defaultValue={this.state.ssiAssistanceValue}/>  <span className={"text-red-600"}>{`${this.state.ssiLost.toFixed(2)}`}</span><br />
+                               defaultValue={this.state.ssiAssistanceValue}/>  <span className={"text-red-600"}>
+                            {`${this.state.ssiLost.toFixed(2)}`}</span><br />
 
                         <span className={"form-title"}>SSDI Income</span><br/>
-                        <input type="number" id={`${ssdiAssistanceValue}`} className={"font-sans rounded font-semibold py-0.5 pl-1 w-24 mr-2"} onChange={() =>
+                        <input type="number" id={`${ssdiAssistanceValue}`} className={"font-sans rounded font-semibold " +
+                            "py-0.5 pl-1 w-24 mr-2"} onChange={() =>
                             this.updateValueFromInputForms(ssdiAssistanceValue, "ssdi")}
-                           defaultValue={this.state.ssdiAssistanceValue}/>  <span className={"text-red-600"}>{`${this.state.ssdiLost.toFixed(2)}`}</span><br />
+                           defaultValue={this.state.ssdiAssistanceValue}/>  <span className={"text-red-600"}>
+                            {`${this.state.ssdiLost.toFixed(2)}`}</span><br />
 
                         <span className={"form-title"}>SNAP Credit</span><br/>
-                        <input type="number" id={`${snapAssistanceValue}`} className={"font-sans rounded font-semibold py-0.5 pl-1 w-24 mr-2"} onChange={() =>
+                        <input type="number" id={`${snapAssistanceValue}`} className={"font-sans rounded font-semibold " +
+                            "py-0.5 pl-1 w-24 mr-2"} onChange={() =>
                             this.updateValueFromInputForms(snapAssistanceValue, "snap")}
-                               defaultValue={this.state.snapAssistanceValue}/>  <span className={"text-red-600"}>{`${this.state.snapLost.toFixed(2)}`}</span><br />
+                               defaultValue={this.state.snapAssistanceValue}/>  <span className={"text-red-600"}>
+                            {`${this.state.snapLost.toFixed(2)}`}</span><br />
 
                         <span className={"form-title"}>Section 8 Credit</span><br/>
-                        <input type="number" id={`${housingAssistanceValue}`} className={"font-sans rounded font-semibold py-0.5 pl-1 w-24 mr-2"} onChange={() =>
+                        <input type="number" id={`${housingAssistanceValue}`} className={"font-sans rounded " +
+                            "font-semibold py-0.5 pl-1 w-24 mr-2"} onChange={() =>
                             this.updateValueFromInputForms(housingAssistanceValue, "housing")}
-                               defaultValue={this.state.housingAssistanceValue}/>  <span className={"text-red-600"}>{`${this.state.housingLost.toFixed(2)}`}</span><br />
+                               defaultValue={this.state.housingAssistanceValue}/>  <span className={"text-red-600"}>
+                            {`${this.state.housingLost.toFixed(2)}`}</span><br />
 
                         <span className={"form-title"}>LIEAP Credit</span><br/>
-                        <input type="number" id={`${energyAssistanceValue}`} className={"font-sans rounded font-semibold py-0.5 pl-1 w-24 mr-2"} onChange={() =>
+                        <input type="number" id={`${energyAssistanceValue}`} className={"font-sans rounded font-semibold" +
+                            " py-0.5 pl-1 w-24 mr-2"} onChange={() =>
                             this.updateValueFromInputForms(energyAssistanceValue, "energy")}
-                               defaultValue={this.state.energyAssistanceValue}/>  <span className={"text-red-600"}>{`${this.state.energyLost.toFixed(2)}`}</span><br />
+                               defaultValue={this.state.energyAssistanceValue}/>  <span className={"text-red-600"}>
+                            {`${this.state.energyLost.toFixed(2)}`}</span><br />
 
                         <span className={"form-title"}>State Tax Percentage</span><br/>
-                        <input type="number" id={`${stateTaxPercentage}`} className={"font-sans rounded font-semibold py-0.5 pl-1 w-24 mr-2"} onChange={() =>
+                        <input type="number" id={`${stateTaxPercentage}`} className={"font-sans rounded font-semibold " +
+                            "py-0.5 pl-1 w-24 mr-2"} onChange={() =>
                             this.updateValueFromInputForms(stateTaxPercentage, "tax")}
-                               defaultValue={this.state.stateTaxPercentage}/>  <span className={"text-red-600"}>{`${this.state.stateTaxLost.toFixed(2)}`}</span><br /><br />
+                               defaultValue={this.state.stateTaxPercentage}/>  <span className={"text-red-600"}>
+                            {`${this.state.stateTaxLost.toFixed(2)}`}</span><br /><br />
                         </form>
                     </div>
 
@@ -520,26 +538,37 @@ class Counter extends Component {
                     <div className={"max-w-xs sm:max-w-sm"}>
                         <form>
                         <span className={"form-title"}>Medicaid Value</span><br/>
-                        <input type="number" id={`${medicaidAssistanceValue}`} className={"font-sans rounded font-semibold py-0.5 pl-1 w-24 mr-2"} onChange={() =>
+                        <input type="number" id={`${medicaidAssistanceValue}`} className={"font-sans rounded " +
+                            "font-semibold py-0.5 pl-1 w-24 mr-2"} onChange={() =>
                             this.updateValueFromInputForms(medicaidAssistanceValue, "medicaid")}
-                               defaultValue={this.state.medicaidAssistanceValue}/>  <span className={"text-red-600"}>{`${this.state.medicaidLost.toFixed(2)}`}</span><br />
+                               defaultValue={this.state.medicaidAssistanceValue}/>  <span className={"text-red-600"}>
+                            {`${this.state.medicaidLost.toFixed(2)}`}</span><br />
 
                         <span className={"form-title"}>Medicare est. Loss</span><br/>
-                        <input type="number" id={`${medicareAssistanceValue}`} className={"font-sans rounded font-semibold py-0.5 pl-1 w-24 mr-2"} onChange={() =>
+                        <input type="number" id={`${medicareAssistanceValue}`} className={"font-sans rounded " +
+                            "font-semibold py-0.5 pl-1 w-24 mr-2"} onChange={() =>
                             this.updateValueFromInputForms(medicareAssistanceValue, "medicare")}
-                               defaultValue={this.state.medicareAssistanceValue}/>  <span className={"text-red-600"}>{`${this.state.medicareLost.toFixed(2)}`}</span><br />
+                               defaultValue={this.state.medicareAssistanceValue}/>  <span className={"text-red-600"}>
+                            {`${this.state.medicareLost.toFixed(2)}`}</span><br />
 
                         <span className={"form-title"}>Pell Grant est. Loss</span><br/>
-                        <input type="number" id={`${pellLost}`} className={"font-sans rounded font-semibold py-0.5 pl-1 w-24 mr-2"} onChange={() =>
+                        <input type="number" id={`${pellLost}`} className={"font-sans rounded font-semibold py-0.5 pl-1" +
+                            " w-24 mr-2"} onChange={() =>
                             this.updateValueFromInputForms(pellLost, "pell")}
-                               defaultValue={this.state.pellLost}/>  <span className={"text-red-600"}>{`${this.state.pellLost.toFixed(2)}`}</span><br />
+                               defaultValue={this.state.pellLost}/>  <span className={"text-red-600"}>
+                            {`${this.state.pellLost.toFixed(2)}`}</span><br />
 
                         <br />
-                        Lost to federal income tax: <span className={"text-red-600"}>{`${this.state.federalTaxLost.toFixed(2)}`}</span><br />
-                        Lost to medicare tax: <span className={"text-red-600"}>{`${this.state.medicareTaxLost.toFixed(2)}`}</span><br />
-                        Lost to social security tax: <span className={"text-red-600"}>{`${this.state.ssTaxLost.toFixed(2)}`}</span><br /><br />
-                        Earned: <span className={"text-green-600"}>{`${this.state.income.toFixed(2)}`}</span><br />
-                        Combined losses: <span className={"text-red-600"}>{`${this.state.combinedLosses.toFixed(2)}`}</span><br />
+                        Lost to federal income tax: <span className={"text-red-600"}>
+                            {`${this.state.federalTaxLost.toFixed(2)}`}</span><br />
+                        Lost to medicare tax: <span className={"text-red-600"}>
+                            {`${this.state.medicareTaxLost.toFixed(2)}`}</span><br />
+                        Lost to social security tax: <span className={"text-red-600"}>
+                            {`${this.state.ssTaxLost.toFixed(2)}`}</span><br /><br />
+                        Earned: <span className={"text-green-600"}>
+                            {`${this.state.income.toFixed(2)}`}</span><br />
+                        Combined losses: <span className={"text-red-600"}>
+                            {`${this.state.combinedLosses.toFixed(2)}`}</span><br />
 
                         </form>
                     </div>

@@ -5,14 +5,7 @@ import Navigation from "./Navigation";
 
 function Home() {
     return (
-        <div className={""}>
-           {/* <Router>
-                <Navigation/>
-                <Routes>
-                    <Route path="" element={<Home />}> </Route>
-                </Routes>
-            </Router>
-*/}
+        <div>
             <Counter />
         </div>
     );
